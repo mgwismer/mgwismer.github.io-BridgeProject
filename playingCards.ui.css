@@ -7,11 +7,17 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  */
+
+ .playingHand {
+ 	display: block;
+ 	height: 10em;
+ }
+
 .playingCard { /* to show the back of the card, hide the front */
 position: relative;
 background-color:#036;
 border:1px solid #666;
-font-size: 20px;
+font-size: 22px;
 float: left;
 width: 3.8em;
 height: 5em;
@@ -31,6 +37,7 @@ font-size: .5em;
 left: 0.25em;
 top: 0.25em;
 }
+
 .playingCard .cornerBR {
 left: auto;
 top: auto;
