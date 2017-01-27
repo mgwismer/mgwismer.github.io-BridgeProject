@@ -3,47 +3,23 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <title>atomantic/JavaScript-Playing-Cards @ GitHub</title>
+  <title>atomantic/JavaScript-Playing-Cards @ GitHub</title>
 
-    <link rel="stylesheet" type="text/css" media="all" href="css/styles.css"/>
-    <style type="text/css">
-
-        h1 { font-size: 40px; color: #64052a; margin-bottom: 3px; }
-        h1 .small { font-size: 0.4em; }
-        h1 a { text-decoration: none }
-        h2 { font-size: 1.5em; color: #64052a; }
-    h3 { text-align: center; color: #64052a; }
-    a { color: #64052a; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-        pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-
-
-    h2{
-        clear:both;
-    }
-    #error{
-        display:none;color:#f00;border:1px solid #f60;padding:5px;margin:5px;
-    }
-    </style>
-
+  <link rel="stylesheet" type="text/css" media="all" href="css/styles.css"/>
 </head>
 
 <body>
-  <input type="button" id="shuffler" value="shuffle" />
   <input type="button" id="dealCards" value="DEAL CARDS"/>
   <h2>Drawn Hands</h2> <br>
-  <h3> North Hand</h3>
+  <h3> <input type="button" id="northFlip" value="North Hand" /></h3>
   <div id="northHand" class="playingHand"></div> <br>
-  <h3> East Hand </h3>
+  <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
   <div id="eastHand" class="playingHand"></div> <br>
-  <h3> South Hand </h3>
+  <h3> <input type="button" id="southFlip" value="South Hand" /> </h3>
   <div id="southHand" class="playingHand"></div> <br>
-  <h3> West Hand </h3>
+  <h3> <input type="button" id="westFlip" value="West Hand"/> </h3>
   <div id="westHand" class="playingHand"></div>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script type="text/javascript" src="javascript/playingCards.js"></script>
@@ -72,9 +48,11 @@
         this.hearts = [];
         this.clubs = [];
         this.diamonds = [];
+        //an array that includes all 13 cards
         this.completeHand = function() {
           return this.hearts.concat(this.spades).concat(this.diamonds).concat(this.clubs);
         }
+        //sort within each suit according to rank
         this.sortHand = function() {
           this.spades.sort(this.compare);
           this.hearts.sort(this.compare);
@@ -152,10 +130,24 @@
       }
 
       function showHands(north,east,south,west) {
-          showHand(north,"northHand");
-          showHand(east,"eastHand");
-          showHand(south,"southHand");
-          showHand(west,"westHand");
+        showHand(north,"northHand");
+        showHand(east,"eastHand");
+        showHand(south,"southHand");
+        showHand(west,"westHand");
+      }
+
+      function flipCards(direction) {
+        var dirDiv = document.getElementById(direction);
+        var c = dirDiv.getElementsByClassName("playingCard");
+        for (var i = 0; i < c.length; i++) {
+          var front = c[i].getElementsByClassName("front")[0];
+          if (front.style.visibility == "hidden") {
+            front.style.visibility = "visible";
+          }
+          else {
+            front.style.visibility = "hidden";
+          }
+        }
       }
 
       var doOrderByRank = function(){
@@ -168,6 +160,18 @@
       }
       $('#shuffler').click(doShuffle);
       $('#dealCards').click(dealCards);
+      $('#northFlip').click(function() {
+        flipCards("northHand");
+      });
+      $('#eastFlip').click(function() {
+        flipCards("eastHand");
+      });
+      $('#southFlip').click(function() {
+        flipCards("southHand");
+      });
+      $('#westFlip').click(function() {
+        flipCards("westHand");
+      });
   });
         /*
         // if we weren't using jquery to handle the document ready state, we would do this:

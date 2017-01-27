@@ -32,11 +32,12 @@ body {
   height: 5em; }
 
 .playingCard .front {
-  background-color: #00f;
+  background-color: white;
   color: #000;
   position: absolute;
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  visibility: hidden; }
 
 .playingCard .corner {
   position: absolute;
