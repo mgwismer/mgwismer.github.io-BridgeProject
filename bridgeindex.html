@@ -89,7 +89,6 @@
          * example throwing cards on the table
          */
         $(document).ready(function(){
-            var cardDeck = $("#cardDeck").playingCards();
             
             var cardRank = {
               Two: 0,
@@ -122,7 +121,6 @@
                 this.clubs.sort(this.compare);
               }
               this.compare = function(a, b) {
-                console.log(cardRank[a.rankString]);
                 if (cardRank[a.rankString] < cardRank[b.rankString])
                   return -1;
                 if (cardRank[a.rankString] > cardRank[b.rankString])
@@ -155,7 +153,6 @@
             }
 
             var showHand = function(hand,idName){
-                console.log(hand);
                 var el = $('#'+idName);
                 el.html('');
                 for(var i=0;i<hand.length;i++){
@@ -164,25 +161,25 @@
             }
 
             var doShuffle = function(){
+                var cardDeck = new playingCards();
+                console.log("new cards");
                 cardDeck.shuffle();
                 cardDeck.spread(); // update card table
             }
 
-            var dealCards = function(numCards,numHands) {
-              cardDeck.shuffle();
+            var dealCards = function() { 
+              console.log("button clicked");
+              var cardDeck = $("#cardDeck").playingCards();
               var north = new bridgeHand;
               var south = new bridgeHand;
               var east = new bridgeHand;
               var west = new bridgeHand;
-              console.log("before for");
-              console.log(north);
-              for(var j = 0; j < numCards; j++) {
+              for(var j = 0; j < 13; j++) {
                 north.addCardToHand(cardDeck.draw());
                 east.addCardToHand(cardDeck.draw());
                 south.addCardToHand(cardDeck.draw());
                 west.addCardToHand(cardDeck.draw());
               }
-              console.log(east);
               north.sortHand();
               east.sortHand();
               south.sortHand();
@@ -206,8 +203,7 @@
                 cardDeck.spread(); // update card table
             }
             $('#shuffler').click(doShuffle);
-            $('#dealCards').click(dealCards(13,4));
-
+            $('#dealCards').click(dealCards);
         });
         /*
         // if we weren't using jquery to handle the document ready state, we would do this:
@@ -223,7 +219,7 @@
         }
         */
     </script>
-
+<!-- 
     <h2>Download</h2>
     <p>
       You can download this project in either
@@ -253,7 +249,7 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>
+</script> -->
 </body>
 </html>
-˝
+
