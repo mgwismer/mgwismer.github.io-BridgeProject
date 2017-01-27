@@ -7,18 +7,9 @@
 
     <title>atomantic/JavaScript-Playing-Cards @ GitHub</title>
 
-    <link rel="stylesheet" type="text/css" media="all" href="playingCards.ui.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="css/styles.css"/>
     <style type="text/css">
-        body {
-          margin-top: 1.0em;
-          background-color: #fff;
-          font-family: "Helvetica,Arial,FreeSans";
-          color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 860px;
-    }
+
         h1 { font-size: 40px; color: #64052a; margin-bottom: 3px; }
         h1 .small { font-size: 0.4em; }
         h1 a { text-decoration: none }
@@ -43,111 +34,141 @@
 </head>
 
 <body>
-  <a href="http://github.com/atomantic/JavaScript-Playing-Cards"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  <input type="button" id="shuffler" value="shuffle" />
+  <input type="button" id="dealCards" value="DEAL CARDS"/>
+  <h2>Drawn Hands</h2> <br>
+  <h3> North Hand</h3>
+  <div id="northHand" class="playingHand"></div> <br>
+  <h3> East Hand </h3>
+  <div id="eastHand" class="playingHand"></div> <br>
+  <h3> South Hand </h3>
+  <div id="southHand" class="playingHand"></div> <br>
+  <h3> West Hand </h3>
+  <div id="westHand" class="playingHand"></div>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascript/playingCards.js"></script>
+  <script type="text/javascript" src="javascript/playingCards.ui.js"></script>
+  <script type="text/javascript">
 
-  <div id="container">
+    $(document).ready(function(){
+      var cardRank = {
+        Two: 0,
+        Three: 1,
+        Four: 2,
+        Five: 3,
+        Six: 4,
+        Seven: 5,
+        Eight: 6,
+        Nine: 7,
+        Ten: 8,
+        Jack: 9,
+        Queen: 10,
+        King: 11,
+        Ace: 12,
+      }
 
-    <div class="download">
-      <a href="http://github.com/atomantic/JavaScript-Playing-Cards/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/atomantic/JavaScript-Playing-Cards/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
+      var bridgeHand = function() {
+        this.spades = [];
+        this.hearts = [];
+        this.clubs = [];
+        this.diamonds = [];
+        this.completeHand = function() {
+          return this.hearts.concat(this.spades).concat(this.diamonds).concat(this.clubs);
+        }
+        this.sortHand = function() {
+          this.spades.sort(this.compare);
+          this.hearts.sort(this.compare);
+          this.diamonds.sort(this.compare);
+          this.clubs.sort(this.compare);
+        }
+        this.compare = function(a, b) {
+          if (cardRank[a.rankString] < cardRank[b.rankString])
+            return -1;
+          if (cardRank[a.rankString] > cardRank[b.rankString])
+            return 1;
+          return 0;
+        }
+        this.addCardToHand = function(card) {
+          switch (card.suit) {
+            case "S":
+              this.spades.push(card);
+              break;
+            case "D":
+              this.diamonds.push(card);
+              break;
+            case "C":
+              this.clubs.push(card);
+              break;
+            case "H":
+              this.hearts.push(card);
+              break;
+          }
+        }
+      }
 
-    <h1><a href="http://github.com/atomantic/JavaScript-Playing-Cards">JavaScript Playing Cards</a>
-      <span class="small">by <a href="http://github.com/atomantic">Adam Eivy (antic | atomantic)</a></span></h1>
+      var showError = function(msg){
+        $('#error').html(msg).show();
+        setTimeout(function(){
+          $('#error').fadeOut('slow');
+        },3000);
+      }
 
-    <div class="description">
-      A playing card JavaScript and CSS library for creating standard deck games. The library is wrapped to allow it to act as a plugin for jquery (or another framework)
-    </div>
+      var showHand = function(hand,idName){
+        var el = $('#'+idName);
+        el.html('');
+          for(var i=0;i<hand.length;i++){
+            el.append(hand[i].getHTML());
+            var allCards = document.getElementsByClassName("playingCard");
+            var lastCard = allCards[allCards.length-1];
+            lastCard.style.left = -i*65+"px";
+          }
+      }
 
-    <p>This is really just a proof-of-concept that a deck of cards can be managed in JavaScript/CSS</p>
-    <p>You might be interested in my hand-painted, beetle-themed playing card deck, which I'll be releasing to Kickstarter ~Aug 1, 2015: http://bit.ly/beetledeck</p>
-    <h2>License</h2>
-<p>MIT/GPL</p>
-<br/>      </p>
+      var doShuffle = function(){
+        var cardDeck = new playingCards();
+        console.log("new cards");
+        cardDeck.shuffle();
+        cardDeck.spread(); // update card table
+      }
 
+      var dealCards = function() { 
+        console.log("button clicked");
+        var cardDeck = $("#cardDeck").playingCards();
+        var north = new bridgeHand;
+        var south = new bridgeHand;
+        var east = new bridgeHand;
+        var west = new bridgeHand;
+        for(var j = 0; j < 13; j++) {
+          north.addCardToHand(cardDeck.draw());
+          east.addCardToHand(cardDeck.draw());
+          south.addCardToHand(cardDeck.draw());
+          west.addCardToHand(cardDeck.draw());
+        }
+        north.sortHand();
+        east.sortHand();
+        south.sortHand();
+        west.sortHand();
+        showHands(north.completeHand(),east.completeHand(),south.completeHand(),west.completeHand());
+      }
 
-    <h2>Demo</h2>
-    <div id="error"></div>
-    <input type="button" id="shuffler" value="shuffle" />
-    <input type="button" id="draw" value="draw a card" />
-    <input type="button" id="addCard" value="add drawn card back" />
-    <input type="button" id="shuffleDraw" value="shuffle, then draw" />
-    <input type="button" id="orderByRank" value="order by rank" />
-    <input type="button" id="orderBySuit" value="order by suit" />
-    <h2>Card Deck</h2>
-    <div id="cardDeck"></div>
-    <br />
-    <h2>Drawn Cards</h2>
-    <div id="yourHand"></div>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script type="text/javascript" src="playingCards.js"></script>
-    <script type="text/javascript" src="playingCards.ui.js"></script>
-    <script type="text/javascript">
-        /*
-         * example throwing cards on the table
-         */
-        $(document).ready(function(){
-            var cardDeck = $("#cardDeck").playingCards();
-            cardDeck.spread(); // show it
+      function showHands(north,east,south,west) {
+          showHand(north,"northHand");
+          showHand(east,"eastHand");
+          showHand(south,"southHand");
+          showHand(west,"westHand");
+      }
 
-            var hand = [];
-            var showError = function(msg){
-                $('#error').html(msg).show();
-                setTimeout(function(){
-                    $('#error').fadeOut('slow');
-                },3000);
-            }
-            var showHand = function(){
-                var el = $('#yourHand')
-                el.html('');
-                for(var i=0;i<hand.length;i++){
-                    el.append(hand[i].getHTML());
-                }
-            }
-            var doShuffle = function(){
-                cardDeck.shuffle();
-                cardDeck.spread(); // update card table
-            }
-            var doDrawCard = function(){
-                var c = cardDeck.draw();
-                if(!c){
-                    showError('no more cards');
-                    return;
-                }
-                hand[hand.length] = c;
-                cardDeck.spread();
-                showHand();
-            }
-            var doOrderByRank = function(){
-                cardDeck.orderByRank();
-                cardDeck.spread(); // update card table
-            }
-            var doOrderBySuit = function(){
-                cardDeck.orderBySuit();
-                cardDeck.spread(); // update card table
-            }
-            $('#shuffler').click(doShuffle);
-            $('#draw').click(doDrawCard);
-            $('#shuffleDraw').click(function(){
-                doShuffle();
-                doDrawCard();
-            });
-            $('#addCard').click(function(){
-                if(!hand.length){
-                    showError('your hand is empty');
-                    return;
-                }
-                var c = hand.pop();
-                showHand();
-                cardDeck.addCard(c);
-                cardDeck.spread();
-            });
-            $('#orderByRank').click(doOrderByRank);
-            $('#orderBySuit').click(doOrderBySuit);
-
-        });
+      var doOrderByRank = function(){
+          cardDeck.orderByRank();
+          cardDeck.spread(); // update card table
+      }
+      var doOrderBySuit = function(){
+          cardDeck.orderBySuit();
+          cardDeck.spread(); // update card table
+      }
+      $('#shuffler').click(doShuffle);
+      $('#dealCards').click(dealCards);
+  });
         /*
         // if we weren't using jquery to handle the document ready state, we would do this:
         if (window.addEventListener) {
@@ -163,36 +184,6 @@
         */
     </script>
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/atomantic/JavaScript-Playing-Cards/zipball/master">zip</a> or
-      <a href="http://github.com/atomantic/JavaScript-Playing-Cards/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/atomantic/JavaScript-Playing-Cards</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/atomantic/JavaScript-Playing-Cards">atomantic/JavaScript-Playing-Cards</a>
-    </div>
-
-  </div>
-
-  <script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-16813977-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 </body>
 </html>
-˝
+
