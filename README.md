@@ -1,11 +1,15 @@
-#License
-JavaScript & CSS:  
+# BridgeProject
+An interactive Bridge practice site for anyone wanting to learn bridge or practice their skills
+
+Uses the card creation javascript library playingcards.js to shuffle, draw and display cards.
+
+vaScript & CSS:  
 @author Adam Eivy (antic | atomantic)  
 @link [http://adameivy.com/JavaScript-Playing-Cards/](http://adameivy.com/JavaScript-Playing-Cards/)  
 
 @license Copyright (c) 2010 Adam Eivy (antic | atomantic) Dual licensed under the MIT and GPL licenses:  
- * [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)  
- * [http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html)
+* [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)  
+* [http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html)
 
 Card Face images:
 @author David Bellot  
@@ -26,17 +30,18 @@ On the flip-side, since you obviously like playing cards, you might be intereste
 
 If you are only using playingCards.js:  
 
-	var cardDeck = new playingCards(); // will create a new deck object
+var cardDeck = new#License
+Ja playingCards(); // will create a new deck object
 
 If you are including jQuery, the playingCards.ui.js and playingCards.ui.css:
 
-	$('#cardTable').playingCards(); // will lay out a random deck on the cardTable element
+$('#cardTable').playingCards(); // will lay out a random deck on the cardTable element
 
 override defaults for playingCards() and for card() by adding new properties to the following objects:
 
-	playingCards.defaults
+playingCards.defaults
 
-	playingCards.card.defaults
+playingCards.card.defaults
 
 ##Example Implementation
 For a rough example of implementation, look at the code for the demo page:
