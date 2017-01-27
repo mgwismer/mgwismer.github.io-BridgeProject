@@ -91,6 +91,62 @@
         $(document).ready(function(){
             var cardDeck = $("#cardDeck").playingCards();
             
+            var cardRank = {
+              Two: 0,
+              Three: 1,
+              Four: 2,
+              Five: 3,
+              Six: 4,
+              Seven: 5,
+              Eight: 6,
+              Nine: 7,
+              Ten: 8,
+              Jack: 9,
+              Queen: 10,
+              King: 11,
+              Ace: 12,
+            }
+
+            var bridgeHand = function() {
+              this.spades = [];
+              this.hearts = [];
+              this.clubs = [];
+              this.diamonds = [];
+              this.completeHand = function() {
+                return this.hearts.concat(this.spades).concat(this.diamonds).concat(this.clubs);
+              }
+              this.sortHand = function() {
+                this.spades.sort(this.compare);
+                this.hearts.sort(this.compare);
+                this.diamonds.sort(this.compare);
+                this.clubs.sort(this.compare);
+              }
+              this.compare = function(a, b) {
+                console.log(cardRank[a.rankString]);
+                if (cardRank[a.rankString] < cardRank[b.rankString])
+                  return -1;
+                if (cardRank[a.rankString] > cardRank[b.rankString])
+                  return 1;
+                return 0;
+              }
+              this.addCardToHand = function(card) {
+                switch (card.suit) {
+                  case "S":
+                      this.spades.push(card);
+                      break;
+                  case "D":
+                      this.diamonds.push(card);
+                      break;
+                  case "C":
+                      this.clubs.push(card);
+                      break;
+                  case "H":
+                      this.hearts.push(card);
+                      break;
+                }
+              }
+            }
+
             var showError = function(msg){
                 $('#error').html(msg).show();
                 setTimeout(function(){
@@ -114,31 +170,24 @@
 
             var dealCards = function(numCards,numHands) {
               cardDeck.shuffle();
-              var north = [];
-              var south = [];
-              var east = [];
-              var west = [];
+              var north = new bridgeHand;
+              var south = new bridgeHand;
+              var east = new bridgeHand;
+              var west = new bridgeHand;
               console.log("before for");
               console.log(north);
               for(var j = 0; j < numCards; j++) {
-                console.log("loop "+j);
-                var c1 = cardDeck.draw();
-                console.log(c1);
-                north[north.length] = c1;
-                console.log(north[north.length-1]);
-                var c2 = cardDeck.draw();
-                console.log(c2);
-                east.push(c2);
-                console.log(east[east.length-1]);
-                var c3 = cardDeck.draw();
-                south[south.length] = c3;
-                var c4 = cardDeck.draw();
-                west[west.length] = c4;
-                // console.log(j);
-                // console.log(north);
+                north.addCardToHand(cardDeck.draw());
+                east.addCardToHand(cardDeck.draw());
+                south.addCardToHand(cardDeck.draw());
+                west.addCardToHand(cardDeck.draw());
               }
               console.log(east);
-              showHands(north,east,south,west);
+              north.sortHand();
+              east.sortHand();
+              south.sortHand();
+              west.sortHand();
+              showHands(north.completeHand(),east.completeHand(),south.completeHand(),west.completeHand());
             }
 
             function showHands(north,east,south,west) {
