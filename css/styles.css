@@ -18,7 +18,7 @@ body {
   width: 860px; }
 
 .playingHand {
-  display: block;
+  display: flex;
   height: 10em; }
 
 .playingCard {
