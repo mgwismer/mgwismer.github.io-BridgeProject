@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<!--   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
   <script type="text/javascript" src="javascript/playingCards.js"></script>
   <script type="text/javascript" src="javascript/playingCards.ui.js"></script>
   <script type="text/javascript" src="javascript/bridge.js"></script>
@@ -27,15 +26,40 @@
   </div>
     <div class="westeastCont">
       <h3> <input type="button" id="westFlip" value="West Hand"/> </h3>
-      <div id="westHand" class="playingHand">      
+      <div id="westHand" class="playingHand">    
       </div>
-      <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
-      <div id="eastHand" class="playingHand">
+      <div class="eastCont">
+        <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
+        <div id="eastHand" class="playingHand">
+        </div>
       </div>
     </div>
-  <h3> <input type="button" id="southFlip" value="South Hand" /> </h3>
-  <div id="southHand" class="playingHand"></div> <br>
-  </div>
+    <div class="southCont">
+      <h3> <input type="button" id="southFlip" value="South Hand" /> </h3>
+      <div id="southHand" class="playingHand"></div> <br>
+    </div>
+    <div class="biddingDiv">
+      <form id="amtForm">
+        <select id="mySelect">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>PASS</option>
+        </select>
+      </form>
+      <form id="myForm">
+        <select id="mySelect">
+          <option>"♠︎"︎</option>
+          <option style="color:red">"♥︎"</option>
+          <option style="background-color:red">"♦︎"</option>
+          <option>"♣︎"</option>
+        </select>
+      </form>
+    </div>
 
 </body>
 </html>
