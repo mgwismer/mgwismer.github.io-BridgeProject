@@ -45,6 +45,16 @@ body {
   left: 0.25em;
   top: 0.25em; }
 
+#eastFlip {
+  position: relative;
+  bottom: 7em;
+  left: 30em; }
+
+#eastHand {
+  position: relative;
+  bottom: 14.5em;
+  left: 30em; }
+
 .playingCard .cornerBR {
   left: auto;
   top: auto;

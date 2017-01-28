@@ -8,7 +8,10 @@
   <title>atomantic/JavaScript-Playing-Cards @ GitHub</title>
 
   <link rel="stylesheet" type="text/css" media="all" href="css/styles.css"/>
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
   <script type="text/javascript" src="javascript/playingCards.js"></script>
   <script type="text/javascript" src="javascript/playingCards.ui.js"></script>
   <script type="text/javascript" src="javascript/bridge.js"></script>
@@ -16,15 +19,23 @@
 
 <body>
   <input type="button" id="dealCards" value="DEAL CARDS"/>
+  <div class="container-fluid">
   <h2>Drawn Hands</h2> <br>
-  <h3> <input type="button" id="northFlip" value="North Hand" /></h3>
-  <div id="northHand" class="playingHand"></div> <br>
-  <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
-  <div id="eastHand" class="playingHand"></div> <br>
+  <div class="northCont">
+    <h3> <input type="button" id="northFlip" value="North Hand" /></h3>
+    <div id="northHand" class="playingHand"></div> 
+  </div>
+    <div class="westeastCont">
+      <h3> <input type="button" id="westFlip" value="West Hand"/> </h3>
+      <div id="westHand" class="playingHand">      
+      </div>
+      <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
+      <div id="eastHand" class="playingHand">
+      </div>
+    </div>
   <h3> <input type="button" id="southFlip" value="South Hand" /> </h3>
   <div id="southHand" class="playingHand"></div> <br>
-  <h3> <input type="button" id="westFlip" value="West Hand"/> </h3>
-  <div id="westHand" class="playingHand"></div>
+  </div>
 
 </body>
 </html>

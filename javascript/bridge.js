@@ -12,6 +12,8 @@ function initPlayingCards() {
 }
 */
 $(document).ready(function(){
+  //check for bootstrap
+  console.log(typeof $().modal == 'function');
   var cardRank = {
     Two: 0,
     Three: 1,
@@ -101,11 +103,14 @@ $(document).ready(function(){
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
+      console.log(idName);
+      //console.log(hand);
       for(var i = 0; i < hand.length; i++) {
         el.append(hand[i].getHTML());
         var allCards = document.getElementsByClassName("playingCard");
+        console.log(allCards);
         var lastCard = allCards[allCards.length-1];
-        lastCard.style.left = -i*50+"px";
+        lastCard.style.left = -i*55+"px";
       }
     }
   }
@@ -117,9 +122,9 @@ $(document).ready(function(){
     },3000);
   }
 
-  var bridgeTable = function(dealer) {
+  var bridgeTable = function() {
     this.table = ["north", "east","south","west"];
-    this.currentPos = dealer;
+    this.currentPos = 0;
     this.currentBidder = this.table[this.currentPos];
     this.moveCurrentBidder = function() {
       this.table.push(currentBidder);
@@ -141,18 +146,19 @@ $(document).ready(function(){
         west.addCardToHand(cardDeck.draw());
       }
       north.sortHand();
+      west.sortHand();
       east.sortHand();
       south.sortHand();
-      west.sortHand();
-      this.showHands(north, east, south, west);
-      this.addFlipButtons(north, east, south, west);
+      this.showHands(north, west, east, south);
+      this.addFlipButtons(north, west, east, south);
     }
 
-    this.showHands = function(north, east, south, west) {
+    this.showHands = function(north, west, east, south) {
+      console.log("show hands");
       north.showHand("northHand");
+      west.showHand("westHand");
       east.showHand("eastHand");
       south.showHand("southHand");
-      west.showHand("westHand");
     }
 
     this.addFlipButtons = function(dir1,dir2,dir3,dir4) {
@@ -178,7 +184,7 @@ $(document).ready(function(){
     this.legitBid = function(amt, suit) {
       if(amt > this.amount) 
         return true;
-      else if (amt < this.amount) {
+      else if (amt < this.amount) 
         return false;
       else if (this.suit == null)
         return true;
@@ -186,7 +192,6 @@ $(document).ready(function(){
         return true;
       else 
         return false;
-      }
     }
     this.setCurrentBid = function(amt, suit) {
       this.amount = amt;
@@ -194,7 +199,29 @@ $(document).ready(function(){
     }
   }
 
-  var myTable = new bridgeTable;
-  $('#dealCards').click(myTable.createTable(0));
+  function removePlayingCards() {
+    var cardNode = document.getElementById("northHand");
+    while (cardNode.firstChild) {
+      cardNode.removeChild(cardNode.firstChild);
+    }
+    var cardNode = document.getElementById("westHand");
+    while (cardNode.firstChild) {
+      cardNode.removeChild(cardNode.firstChild);
+    }
+    var cardNode = document.getElementById("eastHand");
+    while (cardNode.firstChild) {
+      cardNode.removeChild(cardNode.firstChild);
+    }
+    var cardNode = document.getElementById("southHand");
+    while (cardNode.firstChild) {
+      cardNode.removeChild(cardNode.firstChild);
+    }
+  }
+
+  $('#dealCards').click(function() {
+    removePlayingCards();
+    var myTable = new bridgeTable;
+    myTable.createTable();
+  });
 
 });
