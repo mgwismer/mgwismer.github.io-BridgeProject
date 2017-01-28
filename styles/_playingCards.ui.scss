@@ -52,14 +52,24 @@ body {
 
 #eastFlip {
 	position: relative;
-	bottom: 7em;
-	left: 30em;
+	bottom: 8.5em;
+	left: 20em;
 }
 
 #eastHand {
 	position: relative;
 	bottom: 14.5em;
 	left: 30em;
+}
+
+.northCont {
+	position: relative;
+	left: $leftNS;
+}
+.southCont {
+	position: relative;
+	bottom: 15em;
+	left: $leftNS;
 }
 
 .playingCard .cornerBR {
@@ -99,6 +109,13 @@ body {
 	top: 0.45em;
 	width: 2.5em;
 	height: 4.0em;
+}
+
+.biddingDiv {
+	display: flex;
+	position: relative;
+	bottom: 50em;
+	left: 50em;
 }
 
 /*
