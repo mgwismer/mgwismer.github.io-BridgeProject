@@ -17,6 +17,9 @@ body {
   margin: 0 auto;
   width: 860px; }
 
+.bridgeTable {
+  border: 2px solid black; }
+
 .playingHand {
   display: flex;
   height: 10em; }
@@ -47,12 +50,12 @@ body {
 
 #eastFlip {
   position: relative;
-  bottom: 8.5em;
-  left: 20em; }
+  bottom: 13em;
+  left: 33em; }
 
 #eastHand {
   position: relative;
-  bottom: 14.5em;
+  bottom: 13em;
   left: 30em; }
 
 .northCont {
@@ -99,10 +102,23 @@ body {
   height: 4.0em; }
 
 .biddingDiv {
-  display: flex;
   position: relative;
   bottom: 50em;
   left: 50em; }
+
+.bidHead {
+  display: flex; }
+
+.bidSelectDiv {
+  display: flex;
+  position: relative;
+  right: 20px; }
+
+.bidBox {
+  width: 50px;
+  height: 30px;
+  border: 2px solid gray;
+  border-radius: 2px; }
 
 /*
 .playingCard .J {

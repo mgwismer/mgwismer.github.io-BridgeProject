@@ -19,48 +19,99 @@
 <body>
   <input type="button" id="dealCards" value="DEAL CARDS"/>
   <div class="container-fluid">
-  <h2>Drawn Hands</h2> <br>
-  <div class="northCont">
-    <h3> <input type="button" id="northFlip" value="North Hand" /></h3>
-    <div id="northHand" class="playingHand"></div> 
-  </div>
-    <div class="westeastCont">
-      <h3> <input type="button" id="westFlip" value="West Hand"/> </h3>
-      <div id="westHand" class="playingHand">    
+    <div class="bridgeTable">
+      <h2>Drawn Hands</h2> <br>
+      <div class="northCont">
+        <h5> <input type="button" id="northFlip" value="North Hand" /></h5>
+        <div id="northHand" class="playingHand"></div> 
       </div>
-      <div class="eastCont">
-        <h3> <input type="button" id="eastFlip" value="East Hand" /> </h3>
-        <div id="eastHand" class="playingHand">
+        <div class="westeastCont">
+          <h5> <input type="button" id="westFlip" value="West Hand"/> </h5>
+          <div id="westHand" class="playingHand">    
+          </div>
+          <div class="eastCont">
+            <h5> <input type="button" id="eastFlip" value="East Hand" /> </h5>
+            <div id="eastHand" class="playingHand">
+            </div>
+          </div>
+        </div>
+        <div class="southCont">
+          <h5> <input type="button" id="southFlip" value="South Hand" /> </h5>
+          <div id="southHand" class="playingHand"></div> <br>
         </div>
       </div>
-    </div>
-    <div class="southCont">
-      <h3> <input type="button" id="southFlip" value="South Hand" /> </h3>
-      <div id="southHand" class="playingHand"></div> <br>
-    </div>
-    <div class="biddingDiv">
-      <form id="amtForm">
-        <select id="mySelect">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>PASS</option>
-        </select>
-      </form>
-      <form id="myForm">
-        <select id="mySelect">
-          <option>"♠︎"︎</option>
-          <option style="color:red">"♥︎"</option>
-          <option style="background-color:red">"♦︎"</option>
-          <option>"♣︎"</option>
-        </select>
-      </form>
-    </div>
-
+      <div class="biddingDiv">
+        <div class="bidHead">
+          <h5> Current Bid: </h5> 
+          <h5 id="bidDir"> North </h5><br>
+        </div>
+        <div class="bidSelectDiv">
+        <div class="amtDiv">
+        <form id="amtForm">
+          <select id="mySelect">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>PASS</option>
+          </select>
+        </form>
+        </div>
+        <div>
+        <form id="suitForm">
+          <select id="mySelect">
+            <option>♠︎</option>
+            <option style="color:red">♥︎</option>
+            <option style="color:red">♦︎</option>
+            <option>♣︎</option>
+          </select>
+          </form>
+        </div>
+        <div class="bidBox">
+          <h5 id="currentBid"> PASS </h5>
+        </div>
+        <div class="bidButton">
+          <h5>
+          <input type="button" id="submitBid" value=SUBMIT>
+          </h5>
+        </div>
+      </div> <!-- End bidSelectDiv -->
+      <div class="bidTable">
+        <table>
+          <tr>
+            <td></td>
+            <td> North </td>
+            <td> East </td>
+            <td> South </td>
+            <td> West </td>
+          </tr>
+          <tr>
+            <td> round 1</td>
+          <tr>
+            <td> round 2</td>
+          </tr>
+          <tr>
+            <td> round 3</td> 
+          </tr>
+          <tr>
+            <td> round 4</td> 
+          </tr>
+          <tr>
+            <td> round 5</td> 
+          </tr>
+          <tr>
+            <td> round 6</td>
+          </tr>
+          <tr>
+            <td> round 7</td>           
+          </tr>
+        </table>
+      </div>
+      </div> <!-- End biddingDiv -->
+  </div>
 </body>
 </html>
 
