@@ -114,6 +114,9 @@ body {
   position: relative;
   right: 20px; }
 
+#idSelect {
+  color: red; }
+
 .bidBox {
   width: 50px;
   height: 30px;

@@ -108,7 +108,6 @@ $(document).ready(function(){
       for(var i = 0; i < hand.length; i++) {
         el.append(hand[i].getHTML());
         var allCards = document.getElementsByClassName("playingCard");
-        console.log(allCards);
         var lastCard = allCards[allCards.length-1];
         lastCard.style.left = -i*55+"px";
       }
@@ -139,19 +138,22 @@ $(document).ready(function(){
       var south = new bridgeHand;
       var east = new bridgeHand;
       var west = new bridgeHand;
-      for(var j = 0; j < 13; j++) {
-        north.addCardToHand(cardDeck.draw());
-        east.addCardToHand(cardDeck.draw());
-        south.addCardToHand(cardDeck.draw());
-        west.addCardToHand(cardDeck.draw());
-      }
-      north.sortHand();
-      west.sortHand();
-      east.sortHand();
-      south.sortHand();
-      this.showHands(north, west, east, south);
-      this.addFlipButtons(north, west, east, south);
+      // for(var j = 0; j < 13; j++) {
+      //   north.addCardToHand(cardDeck.draw());
+      //   east.addCardToHand(cardDeck.draw());
+      //   south.addCardToHand(cardDeck.draw());
+      //   west.addCardToHand(cardDeck.draw());
+      // }
+      // north.sortHand();
+      // west.sortHand();
+      // east.sortHand();
+      // south.sortHand();
+      // this.showHands(north, west, east, south);
+      // this.addFlipButtons(north, west, east, south);
+      var theBid = new bid;
+      theBid.submitBid();
     }
+
 
     this.showHands = function(north, west, east, south) {
       console.log("show hands");
@@ -177,25 +179,69 @@ $(document).ready(function(){
     }
   }
 
-  var thebid = function() {
-    this.bidOrder = ["C","D","H","S","NT"];
-    this.amount = 0;
+  var bid = function() {
+    bidOrder = ["C","D","H","S","NT"];
+    this.amount = 5;
     this.suit = null;
-    this.legitBid = function(amt, suit) {
-      if(amt > this.amount) 
-        return true;
-      else if (amt < this.amount) 
-        return false;
-      else if (this.suit == null)
-        return true;
-      else if (this.bidOrder.indexOf(suit) > this.bidOrder.indexOf(this.suit))
-        return true;
-      else 
-        return false;
-    }
     this.setCurrentBid = function(amt, suit) {
       this.amount = amt;
       this.suit = suit;
+    }
+    this.submitBid = function() {
+      var amt = document.getElementById("amtSelect"); 
+      var suit = document.getElementById("suitSelect");
+      var bidBox = document.getElementById("currentBid");
+      var bidevt = $('#buttonBid');
+      var self = this;
+      self.currBid = [this.amount, this.suit];
+      //a button to change the bid
+      bidevt.click(function(){
+        //current values in the pull down menus
+        var bidamt = amt.options[amt.selectedIndex].text;
+        var bidsuit = suit.options[suit.selectedIndex].text;
+        console.log(legitBid(bidamt,bidsuit,self.currBid));
+        //Only display the suit if the amount is a number
+        if (bidamt == "PASS") {
+          bidBox.innerHTML = bidamt;
+        }
+        else {
+          bidBox.innerHTML = bidamt + bidsuit;;
+        }
+      });
+      //a button to submit the bid.
+      subevt = $('#submitBid');
+      subevt.click(function() {
+        //current values in the pulldown menus
+        var bidamt = amt.options[amt.selectedIndex].text;
+        var bidsuit = suit.options[suit.selectedIndex].text;
+        console.log("submit btn")
+        if (legitBid(bidamt, bidsuit, self.currBid)) {
+          //update the current bid
+          self.amt = bidamt;
+          self.suit = bidsuit;
+          myTable.currentPos += 1;
+          updateTable(self);
+        }
+      });
+    }
+
+    legitBid = function(amt, suit, currBid) {
+      console.log("in legit bid");
+      console.log(currBid);
+      if(amt > currBid[0]) 
+        return true;
+      else if (amt < currBid[0])  {
+        alert("Invalid Bid, Amount must be greater than "+currBid[0]);
+        return false;
+      }
+      else if (currBid[1] == null)
+        return true;
+      else if (bidOrder.indexOf(suit) > bidOrder.indexOf(currBid[1]))
+        return true;
+      else {
+        alert("Invalid Bid. Pick a higher ranked suit");
+        return false;
+      }
     }
   }
 
