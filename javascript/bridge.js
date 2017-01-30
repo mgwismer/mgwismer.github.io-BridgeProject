@@ -151,7 +151,7 @@ $(document).ready(function(){
       // this.showHands(north, west, east, south);
       // this.addFlipButtons(north, west, east, south);
       var theBid = new bid;
-      theBid.submitBid();
+      theBid.submitBid(this.currentPos);
     }
 
 
@@ -179,19 +179,24 @@ $(document).ready(function(){
     }
   }
 
-  var bid = function() {
-    bidOrder = ["C","D","H","S","NT"];
-    this.amount = 5;
+  var bid = function(curPos) {
+    bidOrder = ["north","east","south","west"];
+    suitOrder = ["♣︎","♦︎","♥︎","♠︎","NT"];
+    this.currentRow = 1;
+    this.currentPos = 0;
+    this.amount = 0;
     this.suit = null;
     this.setCurrentBid = function(amt, suit) {
       this.amount = amt;
       this.suit = suit;
     }
     this.submitBid = function() {
+      //values in the pull down menus.
       var amt = document.getElementById("amtSelect"); 
       var suit = document.getElementById("suitSelect");
       var bidBox = document.getElementById("currentBid");
       var bidevt = $('#buttonBid');
+      //save properties of bid to pass into event listeners.
       var self = this;
       self.currBid = [this.amount, this.suit];
       //a button to change the bid
@@ -219,28 +224,58 @@ $(document).ready(function(){
           //update the current bid
           self.amt = bidamt;
           self.suit = bidsuit;
-          myTable.currentPos += 1;
+          self.currBid = [bidamt, bidsuit];
           updateTable(self);
+          changeBidder(self);
         }
       });
     }
+    updateTable = function(self) {
+      console.log('#row'+self.currentRow);
+      var round = document.getElementById('row'+self.currentRow);
+      console.log(round);
+      x = round.insertCell(-1);
+      // var x = $('#row'+self.currentRow).insertCell(-1);
+      if (self.amt != "PASS")
+        x.innerHTML = self.amt+self.suit;
+      else
+        x.innerHTML = self.amt;
+    }
 
+    changeBidder = function(self) {
+      self.currentPos += 1;
+      if (self.currentPos == 4) {
+        self.currentPos = 0;
+        self.currentRow += 1; 
+        var newRow = $("#bidTable").insertRow(-1);
+        newRow.idName = "row"+currentRow;
+      }
+      if ((self.currentRow == 7) && (self.currentPos == 4)) {
+        console.log("bidding over");
+      }
+      $('#bidDir').innerHTML = bidOrder[self.currentPos];
+    }
+
+    //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
       console.log("in legit bid");
       console.log(currBid);
-      if(amt > currBid[0]) 
-        return true;
-      else if (amt < currBid[0])  {
-        alert("Invalid Bid, Amount must be greater than "+currBid[0]);
-        return false;
-      }
-      else if (currBid[1] == null)
-        return true;
-      else if (bidOrder.indexOf(suit) > bidOrder.indexOf(currBid[1]))
-        return true;
-      else {
-        alert("Invalid Bid. Pick a higher ranked suit");
-        return false;
+      console.log(suitOrder);
+      if (currBid[0] != 'PASS') {
+        if(amt > currBid[0]) 
+          return true;
+        else if (amt < currBid[0])  {
+          alert("Invalid Bid, Amount must be greater than "+currBid[0]);
+          return false;
+        }
+        else if (currBid[1] == null)
+          return true;
+        else if (suitOrder.indexOf(suit) > suitOrder.indexOf(currBid[1]))
+          return true;
+        else {
+          alert("Invalid Bid. Pick a higher ranked suit");
+          return false;
+        }
       }
     }
   }
@@ -266,8 +301,7 @@ $(document).ready(function(){
 
   $('#dealCards').click(function() {
     removePlayingCards();
-    var myTable = new bridgeTable;
     myTable.createTable();
   });
-
+  var myTable = new bridgeTable;
 });
