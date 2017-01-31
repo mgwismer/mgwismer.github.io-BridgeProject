@@ -204,7 +204,7 @@ $(document).ready(function(){
         //current values in the pull down menus
         var bidamt = amt.options[amt.selectedIndex].text;
         var bidsuit = suit.options[suit.selectedIndex].text;
-        console.log(legitBid(bidamt,bidsuit,self.currBid));
+        //console.log(legitBid(bidamt,bidsuit,self.currBid));
         //Only display the suit if the amount is a number
         if (bidamt == "PASS") {
           bidBox.innerHTML = bidamt;
@@ -219,48 +219,59 @@ $(document).ready(function(){
         //current values in the pulldown menus
         var bidamt = amt.options[amt.selectedIndex].text;
         var bidsuit = suit.options[suit.selectedIndex].text;
-        console.log("submit btn")
+        console.log(bidamt+" "+bidsuit);
+        console.log(self.currBid);
         if (legitBid(bidamt, bidsuit, self.currBid)) {
           //update the current bid
-          self.amt = bidamt;
-          self.suit = bidsuit;
           self.currBid = [bidamt, bidsuit];
+          console.log("current bid");
+          console.log(self.currBid);
           updateTable(self);
           changeBidder(self);
         }
       });
     }
     updateTable = function(self) {
-      console.log('#row'+self.currentRow);
+      //console.log('#row'+self.currentRow);
       var round = document.getElementById('row'+self.currentRow);
-      console.log(round);
+      //console.log(round);
       x = round.insertCell(-1);
       // var x = $('#row'+self.currentRow).insertCell(-1);
-      if (self.amt != "PASS")
-        x.innerHTML = self.amt+self.suit;
+      if (self.currBid[0] != "PASS")
+        x.innerHTML = self.currBid[0]+self.currBid[1];
       else
-        x.innerHTML = self.amt;
+        x.innerHTML = self.currBid[0];
     }
 
     changeBidder = function(self) {
       self.currentPos += 1;
       if (self.currentPos == 4) {
+        //after the 4th seat go back to first
         self.currentPos = 0;
+        //advance the row
         self.currentRow += 1; 
-        var newRow = $("#bidTable").insertRow(-1);
-        newRow.idName = "row"+currentRow;
+        console.log("add row");
+        console.log(self.currentRow);
+        //insert new row
+        var newRow = document.getElementById('bidTable').insertRow(-1);
+        newRow.setAttribute("id","row"+self.currentRow);
+        //label new row
+        var round = document.getElementById('row'+self.currentRow);
+        x = round.insertCell(-1);
+        x.innerHTML = "round "+self.currentRow;
       }
       if ((self.currentRow == 7) && (self.currentPos == 4)) {
         console.log("bidding over");
       }
-      $('#bidDir').innerHTML = bidOrder[self.currentPos];
+      console.log(bidOrder[self.currentPos])
+      document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
 
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
-      console.log("in legit bid");
-      console.log(currBid);
-      console.log(suitOrder);
+      // console.log("in legit bid");
+      // console.log(currBid);
+      //console.log(suitOrder);
       if (currBid[0] != 'PASS') {
         if(amt > currBid[0]) 
           return true;
@@ -277,6 +288,7 @@ $(document).ready(function(){
           return false;
         }
       }
+      return true;
     }
   }
 
