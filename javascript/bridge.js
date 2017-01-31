@@ -123,12 +123,16 @@ $(document).ready(function(){
 
   var bridgeTable = function() {
     this.table = ["north", "east","south","west"];
+    this.partner = [2, 3, 0, 1];
     this.currentPos = 0;
     this.currentBidder = this.table[this.currentPos];
     this.trump = null;
+    //this.player is the person who took the bid and will play
     this.player = null;
     this.dummy = null;
-    this.lead = null;
+    //defender1 will lead
+    this.defender1 = null;
+    this.defender2 = null;
     this.createTable = function() {
       console.log("button clicked");
       var cardDeck = $("#cardDeck").playingCards();
@@ -137,26 +141,38 @@ $(document).ready(function(){
       var south = new bridgeHand;
       var east = new bridgeHand;
       var west = new bridgeHand;
-      // for(var j = 0; j < 13; j++) {
-      //   north.addCardToHand(cardDeck.draw());
-      //   east.addCardToHand(cardDeck.draw());
-      //   south.addCardToHand(cardDeck.draw());
-      //   west.addCardToHand(cardDeck.draw());
-      // }
-      // north.sortHand();
-      // west.sortHand();
-      // east.sortHand();
-      // south.sortHand();
-      // this.showHands(north, west, east, south);
-      // this.addFlipButtons(north, west, east, south);
+      for(var j = 0; j < 13; j++) {
+        north.addCardToHand(cardDeck.draw());
+        east.addCardToHand(cardDeck.draw());
+        south.addCardToHand(cardDeck.draw());
+        west.addCardToHand(cardDeck.draw());
+      }
+      north.sortHand();
+      west.sortHand();
+      east.sortHand();
+      south.sortHand();
+      this.hands = [north, east, south, west];
+      this.showHands(north, west, east, south);
+      this.addFlipButtons(north, west, east, south);
       var theBid = new bid;
       theBid.startBid(this);
     }
 
     this.displayBidResults = function() {
-      console.log("bid results")
-      console.log("bidder "+this.player);
+      console.log("bid results");
+      //this is the person who took the bid and is playing
+      //this.player is a number (0-3) while this.playerDir is a word (i.e north, east)
+      this.playerDir = this.table[this.player];
+      this.dummy = this.determineDummy();
+      if (this.player == 3)
+        this.defender1 = 0
+      else 
+        this.defender1 = this.player + 1;
+      this.defender2 = this.partner[this.defender1];
+      console.log("bidder "+this.playerDir);
       console.log("trump "+this.trump);
+      console.log("dummy"+this.table[this.dummy]);
+      console.log("lead "+this.defender1);
     }
 
     this.showHands = function(north, west, east, south) {
@@ -188,9 +204,12 @@ $(document).ready(function(){
     this.gameDisplayResults = function() {
       console.log("results");
     }
+    this.determineDummy = function() {
+      return this.partner[this.player];
+    }
   }
 
-  var bid = function(table) {
+  var bid = function() {
     bidOrder = ["north","east","south","west"];
     suitOrder = ["♣︎","♦︎","♥︎","♠︎","NT"];
     this.currentRow = 1;
@@ -205,7 +224,7 @@ $(document).ready(function(){
       this.amount = amt;
       this.suit = suit;
     }
-    this.startBid = function(table) {
+    this.startBid = function(myTable) {
       //button to display bid results when bidding is over
       $("#bidResultsbtn").css("visibility","hidden");
       $('#playGamebtn').css("visibility","hidden");
@@ -215,6 +234,9 @@ $(document).ready(function(){
       //save properties of bid to pass into event listeners.
       var self = this;
       self.currBid = [this.amount, this.suit];
+      //myTable.table is the array of directions
+      console.log(myTable.hands[self.currentPos]);
+      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       //a button to submit the bid.
       subevt = $('#submitBid');
       subevt.css("visibility","visible");
@@ -242,12 +264,12 @@ $(document).ready(function(){
           }
           else {
             updateTable(self.currentRow, bidamt, bidsuit);
-            table.trump = self.determineTrump(self);
-            table.player = self.determineBidder(self.history,table.trump);
+            myTable.trump = self.determineTrump(self);
+            myTable.player = self.determineBidder(self.history,myTable.trump);
             biddingOver(self);
           }
-        }
-      });
+        } //end if legit bid
+      }); //end click event
     }
    
     //trump is always the last suit that was bid.
@@ -258,9 +280,6 @@ $(document).ready(function(){
     //the first person to bid the trump suit who is also a partner 
     //of the last person to bid.
     this.determineBidder = function(history,trump) {
-      console.log("Bidder");
-      console.log(history);
-      console.log(trump);
       //the last person to PASS
       var lastPASS = (history.length-1)%4;
       //lastBidder is last person to make a non-PASS bid
@@ -271,9 +290,7 @@ $(document).ready(function(){
       console.log("lastBidder "+lastBidder)
       //bidTeam is lastBidder or partner
       var bidTeam = lastBidder%2;
-      console.log("bidTeam "+bidTeam);
       for (var i = bidTeam; i < history.length; i += 2) {
-        console.log(trump+" compare "+history[i][1]);
         if (trump == history[i][1])
           return i;
       }
@@ -282,13 +299,9 @@ $(document).ready(function(){
     //if there are 3 consecutive PASS bids, unless it is the first three, 
     //the bidding is over.
     threePasses = function(bids) {
-      console.log("bid history");
-      console.log(bids);
       if (bids.length > 3) {
         //the last three in the bids array
         var lastThree = bids.slice(-3);
-        console.log("last three");
-        console.log(lastThree[0][0]+" "+lastThree[1][0]);
         if ((lastThree[0][0] == "PASS") && (lastThree[0][0] == lastThree[1][0])&&(lastThree[1][0] == lastThree[2][0]))
           return true;
         else
@@ -307,6 +320,7 @@ $(document).ready(function(){
     }
 
     changeBidder = function(self) {
+      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       self.currentPos += 1;
       if (self.currentPos == 4) {
         //after the 4th seat go back to first
@@ -324,26 +338,20 @@ $(document).ready(function(){
       if ((self.currentRow == 7) && (self.currentPos == 4)) {
         biddingOver(self);
       }
-      console.log(bidOrder[self.currentPos])
+      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
 
     biddingOver = function(self) {
-      console.log("bidding over");
-      console.log(self.bidder);
-      console.log(self.determineTrump);
-      console.log(self.currBid[1]);
       subevt = $('#submitBid').css("visibility","hidden");
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
       bidRes = $('#playGamebtn').css("visibility","visible");
+      document.getElementById('bidDir').innerHTML = "Bidding Over";
     }
     
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
-      // console.log("in legit bid");
-      // console.log(currBid);
-      //console.log(suitOrder);
       if (currBid[0] != 'PASS') {
         if(amt > currBid[0]) 
           return true;
