@@ -205,14 +205,12 @@ $(document).ready(function(){
         //current values in the pulldown menus
         var bidamt = amt.options[amt.selectedIndex].text;
         var bidsuit = suit.options[suit.selectedIndex].text;
-        console.log("submit");
-        console.log(bidamt+" "+bidsuit);
-        console.log(self.currBid);
         if (legitBid(bidamt, bidsuit, self.currBid)) {
           //update the current bid, if not a PASS
           if (bidamt != "PASS") {
             self.currBid = [bidamt, bidsuit];
-            //stores who made the last non-PASS bid. This suit will be Trump
+            //stores who made the last non-PASS bid. This suit will be Trump if it
+            //is the final bid.
             self.bidder = self.currentPos;
           }
           console.log("current bid");
