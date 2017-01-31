@@ -125,11 +125,10 @@ $(document).ready(function(){
     this.table = ["north", "east","south","west"];
     this.currentPos = 0;
     this.currentBidder = this.table[this.currentPos];
-    this.moveCurrentBidder = function() {
-      this.table.push(currentBidder);
-      this.table.shift();
-      currentBidder = this.table[0];
-    }
+    this.trump = null;
+    this.player = null;
+    this.dummy = null;
+    this.lead = null;
     this.createTable = function() {
       console.log("button clicked");
       var cardDeck = $("#cardDeck").playingCards();
@@ -151,9 +150,12 @@ $(document).ready(function(){
       // this.showHands(north, west, east, south);
       // this.addFlipButtons(north, west, east, south);
       var theBid = new bid;
-      theBid.submitBid(this.currentPos);
+      theBid.startBid(this);
     }
 
+    this.bidDisplayResults = function() {
+
+    }
 
     this.showHands = function(north, west, east, south) {
       console.log("show hands");
@@ -179,7 +181,7 @@ $(document).ready(function(){
     }
   }
 
-  var bid = function(curPos) {
+  var bid = function(table) {
     bidOrder = ["north","east","south","west"];
     suitOrder = ["♣︎","♦︎","♥︎","♠︎","NT"];
     this.currentRow = 1;
@@ -192,7 +194,9 @@ $(document).ready(function(){
       this.amount = amt;
       this.suit = suit;
     }
-    this.submitBid = function() {
+    this.startBid = function(table) {
+      //button to display bid results when bidding is over
+      $("#bidResultsbtn").css("visibility","hidden");
       //values in the pull down menus.
       var amt = document.getElementById("amtSelect"); 
       var suit = document.getElementById("suitSelect");
@@ -201,6 +205,7 @@ $(document).ready(function(){
       self.currBid = [this.amount, this.suit];
       //a button to submit the bid.
       subevt = $('#submitBid');
+      subevt.css("visibility","visible");
       subevt.click(function() {
         //current values in the pulldown menus
         var bidamt = amt.options[amt.selectedIndex].text;
@@ -222,10 +227,34 @@ $(document).ready(function(){
             changeBidder(self);
           }
           else {
+            updateTable(self.currentRow, bidamt, bidsuit);
+            table.trump = self.determineTrump(self);
+            table.player = self.determineBidder(self.history);
             biddingOver(self);
           }
         }
       });
+    }
+   
+    //trump is always the last suit that was bid.
+    this.determineTrump = function() {
+      console.log("the last suit bid");
+      return this.currBid[1];
+    }
+
+    //the first person to bid the trump suit who is also a partner 
+    //of the last person to bid.
+    this.determineBidder = function(history) {
+      //the last person to PASS
+      var lastPASS = (history.length)%4;
+      //lastBidder is last person to make a non-PASS bid
+      if (lastPASS == 3)
+        var lastBidder = 0;
+      else
+        var lastBidder = lastPASS + 1;
+
+
+      console.log("the first player to bid trump");
     }
 
     //if there are 3 consecutive PASS bids, unless it is the first three, 
@@ -271,7 +300,7 @@ $(document).ready(function(){
         x.innerHTML = "round "+self.currentRow;
       }
       if ((self.currentRow == 7) && (self.currentPos == 4)) {
-        console.log("bidding over");
+        biddingOver(self);
       }
       console.log(bidOrder[self.currentPos])
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
@@ -282,6 +311,9 @@ $(document).ready(function(){
       console.log(self.bidder);
       console.log("trump");
       console.log(self.currBid[1]);
+      document.getElementById("submitBid").removeEventListener();
+      subevt = $('#submitBid').css("visibility","hidden");
+      bidRes = $('#bidResultsbtn').css("visibility","visible");
     }
     
     //implements the rules of bridge bidding
