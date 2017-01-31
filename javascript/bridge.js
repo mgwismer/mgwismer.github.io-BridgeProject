@@ -153,8 +153,10 @@ $(document).ready(function(){
       theBid.startBid(this);
     }
 
-    this.bidDisplayResults = function() {
-
+    this.displayBidResults = function() {
+      console.log("bid results")
+      console.log("bidder "+this.player);
+      console.log("trump "+this.trump);
     }
 
     this.showHands = function(north, west, east, south) {
@@ -179,16 +181,25 @@ $(document).ready(function(){
         dir4.flipCards("westHand");
       });
     }
+
+    this.playGame = function() {
+      console.log("game started");
+    }
+    this.gameDisplayResults = function() {
+      console.log("results");
+    }
   }
 
   var bid = function(table) {
     bidOrder = ["north","east","south","west"];
     suitOrder = ["♣︎","♦︎","♥︎","♠︎","NT"];
     this.currentRow = 1;
+    //position of current bidder
     this.currentPos = 0;
     this.amount = 0;
     this.suit = null;
     this.history = [];
+    //stores position of most recent non PASS bidder
     this.bidder = null;
     this.setCurrentBid = function(amt, suit) {
       this.amount = amt;
@@ -197,6 +208,7 @@ $(document).ready(function(){
     this.startBid = function(table) {
       //button to display bid results when bidding is over
       $("#bidResultsbtn").css("visibility","hidden");
+      $('#playGamebtn').css("visibility","hidden");
       //values in the pull down menus.
       var amt = document.getElementById("amtSelect"); 
       var suit = document.getElementById("suitSelect");
@@ -214,14 +226,16 @@ $(document).ready(function(){
           //update the current bid, if not a PASS
           if (bidamt != "PASS") {
             self.currBid = [bidamt, bidsuit];
-            //stores who made the last non-PASS bid. This suit will be Trump if it
+            //stores who made the last non-PASS bid. This suit will be trump if it
             //is the final bid.
             self.bidder = self.currentPos;
           }
-          console.log("current bid");
-          console.log(self.currBid);
+          else 
+            //make the suit a null if bidamt is PASS
+            bidsuit = null;
           //keep a history of all bids and PASSES (i.e. all submits)
           self.history.push([bidamt, bidsuit]);
+          //bidding over if 3 PASSes in a row.
           if (!threePasses(self.history)) {
             updateTable(self.currentRow, bidamt, bidsuit);
             changeBidder(self);
@@ -229,7 +243,7 @@ $(document).ready(function(){
           else {
             updateTable(self.currentRow, bidamt, bidsuit);
             table.trump = self.determineTrump(self);
-            table.player = self.determineBidder(self.history);
+            table.player = self.determineBidder(self.history,table.trump);
             biddingOver(self);
           }
         }
@@ -238,23 +252,31 @@ $(document).ready(function(){
    
     //trump is always the last suit that was bid.
     this.determineTrump = function() {
-      console.log("the last suit bid");
       return this.currBid[1];
     }
 
     //the first person to bid the trump suit who is also a partner 
     //of the last person to bid.
-    this.determineBidder = function(history) {
+    this.determineBidder = function(history,trump) {
+      console.log("Bidder");
+      console.log(history);
+      console.log(trump);
       //the last person to PASS
-      var lastPASS = (history.length)%4;
+      var lastPASS = (history.length-1)%4;
       //lastBidder is last person to make a non-PASS bid
       if (lastPASS == 3)
         var lastBidder = 0;
       else
         var lastBidder = lastPASS + 1;
-
-
-      console.log("the first player to bid trump");
+      console.log("lastBidder "+lastBidder)
+      //bidTeam is lastBidder or partner
+      var bidTeam = lastBidder%2;
+      console.log("bidTeam "+bidTeam);
+      for (var i = bidTeam; i < history.length; i += 2) {
+        console.log(trump+" compare "+history[i][1]);
+        if (trump == history[i][1])
+          return i;
+      }
     }
 
     //if there are 3 consecutive PASS bids, unless it is the first three, 
@@ -309,11 +331,12 @@ $(document).ready(function(){
     biddingOver = function(self) {
       console.log("bidding over");
       console.log(self.bidder);
-      console.log("trump");
+      console.log(self.determineTrump);
       console.log(self.currBid[1]);
-      document.getElementById("submitBid").removeEventListener();
       subevt = $('#submitBid').css("visibility","hidden");
+      subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
+      bidRes = $('#playGamebtn').css("visibility","visible");
     }
     
     //implements the rules of bridge bidding
@@ -363,6 +386,12 @@ $(document).ready(function(){
   $('#dealCards').click(function() {
     removePlayingCards();
     myTable.createTable();
+  });
+  $('#bidResultsbtn').click(function() {
+    myTable.displayBidResults();
+  });
+  $('#playGamebtn').click(function() {
+    myTable.playGame();
   });
   var myTable = new bridgeTable;
 });
