@@ -186,6 +186,8 @@ $(document).ready(function(){
     this.currentPos = 0;
     this.amount = 0;
     this.suit = null;
+    this.history = [];
+    this.bidder = null;
     this.setCurrentBid = function(amt, suit) {
       this.amount = amt;
       this.suit = suit;
@@ -194,53 +196,65 @@ $(document).ready(function(){
       //values in the pull down menus.
       var amt = document.getElementById("amtSelect"); 
       var suit = document.getElementById("suitSelect");
-      var bidBox = document.getElementById("currentBid");
-      var bidevt = $('#buttonBid');
       //save properties of bid to pass into event listeners.
       var self = this;
       self.currBid = [this.amount, this.suit];
-      //a button to change the bid
-      bidevt.click(function(){
-        //current values in the pull down menus
-        var bidamt = amt.options[amt.selectedIndex].text;
-        var bidsuit = suit.options[suit.selectedIndex].text;
-        //console.log(legitBid(bidamt,bidsuit,self.currBid));
-        //Only display the suit if the amount is a number
-        if (bidamt == "PASS") {
-          bidBox.innerHTML = bidamt;
-        }
-        else {
-          bidBox.innerHTML = bidamt + bidsuit;;
-        }
-      });
       //a button to submit the bid.
       subevt = $('#submitBid');
       subevt.click(function() {
         //current values in the pulldown menus
         var bidamt = amt.options[amt.selectedIndex].text;
         var bidsuit = suit.options[suit.selectedIndex].text;
+        console.log("submit");
         console.log(bidamt+" "+bidsuit);
         console.log(self.currBid);
         if (legitBid(bidamt, bidsuit, self.currBid)) {
-          //update the current bid
-          self.currBid = [bidamt, bidsuit];
+          //update the current bid, if not a PASS
+          if (bidamt != "PASS") {
+            self.currBid = [bidamt, bidsuit];
+            //stores who made the last non-PASS bid. This suit will be Trump
+            self.bidder = self.currentPos;
+          }
           console.log("current bid");
           console.log(self.currBid);
-          updateTable(self);
-          changeBidder(self);
+          //keep a history of all bids and PASSES (i.e. all submits)
+          self.history.push([bidamt, bidsuit]);
+          if (!threePasses(self.history)) {
+            updateTable(self.currentRow, bidamt, bidsuit);
+            changeBidder(self);
+          }
+          else {
+            biddingOver(self);
+          }
         }
       });
     }
-    updateTable = function(self) {
-      //console.log('#row'+self.currentRow);
-      var round = document.getElementById('row'+self.currentRow);
-      //console.log(round);
+
+    //if there are 3 consecutive PASS bids, unless it is the first three, 
+    //the bidding is over.
+    threePasses = function(bids) {
+      console.log("bid history");
+      console.log(bids);
+      if (bids.length > 3) {
+        //the last three in the bids array
+        var lastThree = bids.slice(-3);
+        console.log("last three");
+        console.log(lastThree[0][0]+" "+lastThree[1][0]);
+        if ((lastThree[0][0] == "PASS") && (lastThree[0][0] == lastThree[1][0])&&(lastThree[1][0] == lastThree[2][0]))
+          return true;
+        else
+          return false;
+      }
+    }
+
+    updateTable = function(currRow, amount, suit) {
+      var round = document.getElementById('row'+currRow);
       x = round.insertCell(-1);
-      // var x = $('#row'+self.currentRow).insertCell(-1);
-      if (self.currBid[0] != "PASS")
-        x.innerHTML = self.currBid[0]+self.currBid[1];
+      if (amount != "PASS")
+        x.innerHTML = amount+suit;
       else
-        x.innerHTML = self.currBid[0];
+        //amount is a number 1 through 7 or the word PASS
+        x.innerHTML = amount;
     }
 
     changeBidder = function(self) {
@@ -250,8 +264,6 @@ $(document).ready(function(){
         self.currentPos = 0;
         //advance the row
         self.currentRow += 1; 
-        console.log("add row");
-        console.log(self.currentRow);
         //insert new row
         var newRow = document.getElementById('bidTable').insertRow(-1);
         newRow.setAttribute("id","row"+self.currentRow);
@@ -267,6 +279,13 @@ $(document).ready(function(){
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
 
+    biddingOver = function(self) {
+      console.log("bidding over");
+      console.log(self.bidder);
+      console.log("trump");
+      console.log(self.currBid[1]);
+    }
+    
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
       // console.log("in legit bid");
