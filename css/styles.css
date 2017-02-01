@@ -107,16 +107,10 @@ body {
   left: 50em; }
 
 .bidHead {
-  display: flex;
-  position: relative;
-  top: 200px;
-  right: 20px; }
+  display: flex; }
 
 .bidSelectDiv {
-  display: flex;
-  position: relative;
-  right: 20px;
-  top: 200px; }
+  display: flex; }
 
 .bidButton {
   position: relative;
@@ -126,12 +120,10 @@ body {
 #idSelect {
   color: red; }
 
-#bidTable, th, td {
-  width: 25%;
-  padding: 5px;
-  position: relative;
-  right: 20px;
-  top: 120px; }
+#bidTable {
+  width: 25%; }
+  #bidTable th, #bidTable td {
+    padding: 5px; }
 
 /*
 .playingCard .J {

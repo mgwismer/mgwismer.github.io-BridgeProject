@@ -176,7 +176,6 @@ $(document).ready(function(){
     }
 
     this.showHands = function(north, west, east, south) {
-      console.log("show hands");
       north.showHand("northHand");
       west.showHand("westHand");
       east.showHand("eastHand");
@@ -333,7 +332,7 @@ $(document).ready(function(){
         //label new row
         var round = document.getElementById('row'+self.currentRow);
         x = round.insertCell(-1);
-        x.innerHTML = "round "+self.currentRow;
+        x.innerHTML = "rnd "+self.currentRow;
       }
       if ((self.currentRow == 7) && (self.currentPos == 4)) {
         biddingOver(self);
