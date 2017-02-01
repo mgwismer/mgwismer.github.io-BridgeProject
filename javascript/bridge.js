@@ -88,6 +88,8 @@ $(document).ready(function(){
     this.flipCards = function(direction) {
       var dirDiv = document.getElementById(direction);
       var c = dirDiv.getElementsByClassName("playingCard");
+      console.log("card flipping");
+      console.log(direction);
       for (var i = 0; i < c.length; i++) {
         var front = c[i].getElementsByClassName("front")[0];
         if (front.style.visibility == "hidden") {
@@ -103,7 +105,6 @@ $(document).ready(function(){
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
-      console.log(idName);
       //console.log(hand);
       for(var i = 0; i < hand.length; i++) {
         el.append(hand[i].getHTML());
@@ -128,6 +129,7 @@ $(document).ready(function(){
     this.currentBidder = this.table[this.currentPos];
     this.trump = null;
     this.contract = 0;
+    this.tricksNeeded = 7;
     //this.player is the person who took the bid and will play
     this.bidder = null;
     this.dummy = null;
@@ -161,7 +163,7 @@ $(document).ready(function(){
 
     this.displayBidResults = function() {
       console.log("bid results");
-      $('.biddingDiv').css("visibility","hidden");
+      $('.biddingDiv').css("display","none");
       //this is the person who took the bid and is playing
       //this.player is a number (0-3) while this.playerDir is a word (i.e north, east)
       this.bidderDir = this.table[this.bidder];
@@ -172,22 +174,26 @@ $(document).ready(function(){
       else 
         this.defender1 = this.bidder + 1;
       this.defender2 = this.partner[this.defender1];
+      console.log(this.bidder);
+      console.log(this.dummy);
+      this.tricksNeeded = parseInt(this.contract)+6;
       $("#bidderDir").html("Bidder: "+this.table[this.bidder]);
       $('#dummyDir').html("Dummy: "+this.table[this.dummy]);
       $('#contract').html("Contract: "+this.contract+" "+this.trump);
       $('#leadDir').html("Lead Dir: "+this.table[this.defender1]);
-      $('#handReq').html(this.table[this.bidder]+"/"+this.table[this.dummy]+" must take "+(this.contract+6)+" in order to make their bid")
-      console.log("bidder "+this.bidderDir);
-      console.log("trump "+this.trump);
-      console.log("dummy"+this.table[this.dummy]);
-      console.log("lead "+this.defender1);
+      $('#handReq').html(this.table[this.bidder]+"/"+this.table[this.dummy]+" must take "+this.tricksNeeded+" in order to make their bid");
+      $('.playResults').css("display","block");   
     }
 
     this.showHands = function(north, west, east, south) {
       north.showHand("northHand");
+      north.flipCards("northHand");
       west.showHand("westHand");
       east.showHand("eastHand");
       south.showHand("southHand");
+      west.flipCards("westHand");
+      east.flipCards("eastHand");
+      south.flipCards("southHand");
     }
 
     this.addFlipButtons = function(dir1,dir2,dir3,dir4) {
@@ -289,7 +295,9 @@ $(document).ready(function(){
     //of the last person to bid.
     this.determineBidder = function(history,trump) {
       //the last person to PASS, have to do % because there are many rounds.
+      console.log("history length "+history.length);
       var lastPASS = (history.length-1)%4;
+      console.log("lastPASS "+lastPASS);
       //lastBidder is last person to make a non-PASS bid
       if (lastPASS == 3)
         //because 1 and 2 also passed.
@@ -297,9 +305,13 @@ $(document).ready(function(){
       else
         //because there are only 4, [0,1,2,3]
         var lastBidder = lastPASS + 1;
+      console.log("lastBidder "+lastBidder);
+      console.log("trump "+trump);
       //bidTeam is lastBidder or partner
       var bidTeam = lastBidder%2;
+      console.log("trump list");
       for (var i = bidTeam; i < history.length; i += 2) {
+        console.log(history[i][1])
         if (trump == history[i][1])
           //the first person on the team to bid trump is the bidder
           return i;
@@ -349,6 +361,7 @@ $(document).ready(function(){
         biddingOver(self);
       }
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
+      //Tells the user which direction is the current bidder
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
 

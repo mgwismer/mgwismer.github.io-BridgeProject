@@ -73,12 +73,6 @@ body {
   right: 0.25em;
   bottom: 0.25em; }
 
-.playingCard .flip {
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  /*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);*/
-  writing-mode: tb-rl; }
-
 .playingCard .red {
   color: #f00; }
 
@@ -126,9 +120,15 @@ body {
   color: red; }
 
 #bidTable {
-  width: 25%; }
+  width: 26%; }
   #bidTable th, #bidTable td {
     padding: 5px; }
+
+.playResults {
+  display: none;
+  position: relative;
+  bottom: 50em;
+  left: 50em; }
 
 /*
 .playingCard .J {

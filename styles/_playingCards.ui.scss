@@ -84,12 +84,12 @@ body {
 	bottom: 0.25em;
 	}
 
-.playingCard .flip {
-	-webkit-transform: rotate(180deg); 
-	-moz-transform: rotate(180deg);
-	/*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);*/
-	writing-mode: tb-rl;
-}
+// .playingCard .flip {
+// 	-webkit-transform: rotate(180deg); 
+// 	-moz-transform: rotate(180deg);
+// 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+// 	writing-mode: tb-rl;
+// }
 
 .playingCard .red {
 	color: #f00;
@@ -146,12 +146,18 @@ body {
 }
 
 #bidTable {
-	width: 25%;
+	width: 26%;
 	th,td {
 		padding: 5px;
 	}
 }
 
+.playResults {
+	display: none;
+	position: relative;
+	bottom: 50em;
+	left: 50em;
+}
 /*
 .playingCard .J {
 background-image: url("img/J.gif");
