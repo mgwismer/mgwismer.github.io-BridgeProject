@@ -127,8 +127,9 @@ $(document).ready(function(){
     this.currentPos = 0;
     this.currentBidder = this.table[this.currentPos];
     this.trump = null;
+    this.contract = 0;
     //this.player is the person who took the bid and will play
-    this.player = null;
+    this.bidder = null;
     this.dummy = null;
     //defender1 will lead
     this.defender1 = null;
@@ -160,16 +161,23 @@ $(document).ready(function(){
 
     this.displayBidResults = function() {
       console.log("bid results");
+      $('.biddingDiv').css("visibility","hidden");
       //this is the person who took the bid and is playing
       //this.player is a number (0-3) while this.playerDir is a word (i.e north, east)
-      this.playerDir = this.table[this.player];
+      this.bidderDir = this.table[this.bidder];
       this.dummy = this.determineDummy();
-      if (this.player == 3)
+      //direction to left of bidder is defender1 and the lead
+      if (this.bidder == 3)
         this.defender1 = 0
       else 
-        this.defender1 = this.player + 1;
+        this.defender1 = this.bidder + 1;
       this.defender2 = this.partner[this.defender1];
-      console.log("bidder "+this.playerDir);
+      $("#bidderDir").html("Bidder: "+this.table[this.bidder]);
+      $('#dummyDir').html("Dummy: "+this.table[this.dummy]);
+      $('#contract').html("Contract: "+this.contract+" "+this.trump);
+      $('#leadDir').html("Lead Dir: "+this.table[this.defender1]);
+      $('#handReq').html(this.table[this.bidder]+"/"+this.table[this.dummy]+" must take "+(this.contract+6)+" in order to make their bid")
+      console.log("bidder "+this.bidderDir);
       console.log("trump "+this.trump);
       console.log("dummy"+this.table[this.dummy]);
       console.log("lead "+this.defender1);
@@ -204,7 +212,7 @@ $(document).ready(function(){
       console.log("results");
     }
     this.determineDummy = function() {
-      return this.partner[this.player];
+      return this.partner[this.bidder];
     }
   }
 
@@ -264,7 +272,8 @@ $(document).ready(function(){
           else {
             updateTable(self.currentRow, bidamt, bidsuit);
             myTable.trump = self.determineTrump(self);
-            myTable.player = self.determineBidder(self.history,myTable.trump);
+            myTable.contract = self.currBid[0];
+            myTable.bidder = self.determineBidder(self.history,myTable.trump);
             biddingOver(self);
           }
         } //end if legit bid
@@ -279,18 +288,20 @@ $(document).ready(function(){
     //the first person to bid the trump suit who is also a partner 
     //of the last person to bid.
     this.determineBidder = function(history,trump) {
-      //the last person to PASS
+      //the last person to PASS, have to do % because there are many rounds.
       var lastPASS = (history.length-1)%4;
       //lastBidder is last person to make a non-PASS bid
       if (lastPASS == 3)
+        //because 1 and 2 also passed.
         var lastBidder = 0;
       else
+        //because there are only 4, [0,1,2,3]
         var lastBidder = lastPASS + 1;
-      console.log("lastBidder "+lastBidder)
       //bidTeam is lastBidder or partner
       var bidTeam = lastBidder%2;
       for (var i = bidTeam; i < history.length; i += 2) {
         if (trump == history[i][1])
+          //the first person on the team to bid trump is the bidder
           return i;
       }
     }
@@ -332,7 +343,7 @@ $(document).ready(function(){
         //label new row
         var round = document.getElementById('row'+self.currentRow);
         x = round.insertCell(-1);
-        x.innerHTML = "rnd "+self.currentRow;
+        x.innerHTML = "RND "+self.currentRow;
       }
       if ((self.currentRow == 7) && (self.currentPos == 4)) {
         biddingOver(self);
