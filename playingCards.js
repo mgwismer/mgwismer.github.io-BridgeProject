@@ -45,7 +45,7 @@ if (Array.indexOf === undefined) {
         this.conf = c;
         this.init();
         if (this.conf.startShuffled) {
-            this.shuffle(5);
+            this.shuffle(10);
         }
         return this;
     };

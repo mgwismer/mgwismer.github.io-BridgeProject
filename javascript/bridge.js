@@ -44,8 +44,8 @@ $(document).ready(function(){
     King: 3,
     Ace: 4,
   }
-
-  function playCard(rank,suit,chair,table) {
+  var numOfPlayers = 4;
+  function playCard(rank,suit,chair) {
     this.rank = rank;
     this.suit = suit;
     this.chair = chair;
@@ -55,11 +55,32 @@ $(document).ready(function(){
   }
 
   function playHand(table) {
+    //if 0 leads then the order is [0,1,2,3], if 1 leads the order is [1,2,3,0]
     this.playDir = [[0,1,2,3],[1,2,3,0],[2,3,0,1],[3,0,1,2]];
     this.playTable = table;
     this.trick = [];
-    this.listenToCards = function(n) {
-       //this is where the event listeners are added to the hand
+    this.listenToCards = function(n,dir) {
+      //this is where the event listeners are added to the hand
+      var currHandDiv = document.getElementById(dir+"Hand");
+      this.currCards = this.playTable.hands[n].completeHand();
+      this.chair = n;
+      //need to do this to pass the object into the event listener
+      self = this
+      currHandDiv.addEventListener("click", function(e1){
+        //when you click you get the front which is a child of playingCard
+        //there are 13 playingCards in the hand.
+        child = e1.target.parentElement;
+        var i = 0;
+        while( (child = child.previousSibling) != null ) 
+          i++;
+        console.log("current Card "+i);
+        console.log(self.currCards[i]);
+        if self.legitFollow(self.currCards[i]) {
+          self.trick.push(self.currCards[i]);
+        }
+        else
+          alert("must follow suit if you can");
+      });
     }
     this.checkLegitPlay = function(card) {
 
@@ -73,6 +94,18 @@ $(document).ready(function(){
     this.startHand = function() {
       console.log("start Hand");
       console.log(this.playTable);
+      var lead = this.playTable.defender1;
+      for (var i = 0; i < 1 ; i++) {
+        //holds the numerical value of whose turn
+        var whoseTurn = this.playDir[lead][i];
+        var turnDir = this.playTable.table[whoseTurn];
+        this.playTable.hands[whoseTurn].flipCards(turnDir+"Hand");
+        console.log(turnDir);
+        //add a picked card to the trick
+        //this.trick.push(this.listenToCards(turnDir));
+        this.listenToCards(whoseTurn,turnDir);
+      }
+      this.chooseFrom
     }
   }
 
@@ -280,7 +313,6 @@ $(document).ready(function(){
       var self = this;
       self.currBid = [this.amount, this.suit];
       //myTable.table is the array of directions
-      console.log(myTable.hands[self.currentPos]);
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       //a button to submit the bid.
       subevt = $('#submitBid');
@@ -327,9 +359,7 @@ $(document).ready(function(){
     //of the last person to bid.
     this.determineBidder = function(history,trump) {
       //the last person to PASS, have to do % because there are many rounds.
-      console.log("history length "+history.length);
-      var lastPASS = (history.length-1)%4;
-      console.log("lastPASS "+lastPASS);
+      var lastPASS = (history.length-1)%numOfPlayers;
       //lastBidder is last person to make a non-PASS bid
       if (lastPASS == 3)
         //because 1 and 2 also passed.
@@ -337,13 +367,9 @@ $(document).ready(function(){
       else
         //because there are only 4, [0,1,2,3]
         var lastBidder = lastPASS + 1;
-      console.log("lastBidder "+lastBidder);
-      console.log("trump "+trump);
       //bidTeam is lastBidder or partner
       var bidTeam = lastBidder%2;
-      console.log("trump list");
       for (var i = bidTeam; i < history.length; i += 2) {
-        console.log(history[i][1])
         if (trump == history[i][1])
           //the first person on the team to bid trump is the bidder
           //need a mod 4 if they started bidding that suit after the first round.       
@@ -403,6 +429,7 @@ $(document).ready(function(){
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
       bidRes = $('#playGamebtn').css("visibility","visible");
+      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       document.getElementById('bidDir').innerHTML = "Bidding Over";
     }
     
