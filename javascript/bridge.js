@@ -75,19 +75,27 @@ $(document).ready(function(){
           i++;
         console.log("current Card "+i);
         console.log(self.currCards[i]);
-        if self.legitFollow(self.currCards[i]) {
+        if (checkLegitPlay(self,i,n)) {
           self.trick.push(self.currCards[i]);
         }
         else
           alert("must follow suit if you can");
+        console.log(self.trick);
       });
     }
-    this.checkLegitPlay = function(card) {
 
+    checkLegitPlay = function(self,i,n) {
+      if (self.trick.length == 0) {
+        return true;
+      }
+      else if (self.currCards[i].suit == trick[0].suit)
+        return true;
     }
+
     this.addCardToTrick = function(){
       this.trick.push(playedCard);
     }
+
     this.playOneTrick = function() {
 
     }
