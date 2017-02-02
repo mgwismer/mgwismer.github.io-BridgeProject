@@ -45,7 +45,7 @@ $(document).ready(function(){
     Ace: 4,
   }
 
-  var playedCard = function(rank,suit,chair,table) {
+  function playCard(rank,suit,chair,table) {
     this.rank = rank;
     this.suit = suit;
     this.chair = chair;
@@ -54,9 +54,9 @@ $(document).ready(function(){
     }
   }
 
-  var playHand = function(table) {
+  function playHand(table) {
     this.playDir = [[0,1,2,3],[1,2,3,0],[2,3,0,1],[3,0,1,2]];
-    this.lead = table.defender1;
+    this.playTable = table;
     this.trick = [];
     this.listenToCards = function(n) {
        //this is where the event listeners are added to the hand
@@ -70,13 +70,13 @@ $(document).ready(function(){
     this.playOneTrick = function() {
 
     }
-    this.startHand = function(table) {
+    this.startHand = function() {
       console.log("start Hand");
-      console.log(table.trump);
+      console.log(this.playTable);
     }
   }
 
-  var bridgeHand = function() {
+  function bridgeHand() {
     this.spades = [];
     this.hearts = [];
     this.clubs = [];
@@ -153,7 +153,8 @@ $(document).ready(function(){
     },3000);
   }
 
-  var bridgeTable = function() {
+  //Bridge Table object with methods
+  function bridgeTable() {
     this.table = ["north", "east","south","west"];
     this.partner = [2, 3, 0, 1];
     this.currentPos = 0;
@@ -453,10 +454,9 @@ $(document).ready(function(){
   $('#bidResultsbtn').click(function() {
     myTable.displayBidResults();
   });
-  $('#playGamebtn').click(function(myTable) {
+  $('#playGamebtn').click(function() {
     var myHand = new playHand(myTable);
-    console.log(myTable);
-    myHand.startHand(myTable);
+    myHand.startHand();
   });
   var myTable = new bridgeTable;
 });
