@@ -45,6 +45,37 @@ $(document).ready(function(){
     Ace: 4,
   }
 
+  var playedCard = function(rank,suit,chair,table) {
+    this.rank = rank;
+    this.suit = suit;
+    this.chair = chair;
+    this.trump = function() {
+      return this.suit == table.trump;
+    }
+  }
+
+  var playHand = function(table) {
+    this.playDir = [[0,1,2,3],[1,2,3,0],[2,3,0,1],[3,0,1,2]];
+    this.lead = table.defender1;
+    this.trick = [];
+    this.listenToCards = function(n) {
+       //this is where the event listeners are added to the hand
+    }
+    this.checkLegitPlay = function(card) {
+
+    }
+    this.addCardToTrick = function(){
+      this.trick.push(playedCard);
+    }
+    this.playOneTrick = function() {
+
+    }
+    this.startHand = function(table) {
+      console.log("start Hand");
+      console.log(table.trump);
+    }
+  }
+
   var bridgeHand = function() {
     this.spades = [];
     this.hearts = [];
@@ -238,7 +269,7 @@ $(document).ready(function(){
       this.suit = suit;
     }
     this.startBid = function(myTable) {
-      //button to display bid results when bidding is over
+      //buttons to display bid results when bidding is over
       $("#bidResultsbtn").css("visibility","hidden");
       $('#playGamebtn').css("visibility","hidden");
       //values in the pull down menus.
@@ -270,7 +301,7 @@ $(document).ready(function(){
             bidsuit = null;
           //keep a history of all bids and PASSES (i.e. all submits)
           self.history.push([bidamt, bidsuit]);
-          //bidding over if 3 PASSes in a row.
+          //bidding is over if 3 PASSes in a row.
           if (!threePasses(self.history)) {
             updateTable(self.currentRow, bidamt, bidsuit);
             changeBidder(self);
@@ -314,7 +345,8 @@ $(document).ready(function(){
         console.log(history[i][1])
         if (trump == history[i][1])
           //the first person on the team to bid trump is the bidder
-          return i;
+          //need a mod 4 if they started bidding that suit after the first round.       
+          return i%4;
       }
     }
 
@@ -421,8 +453,10 @@ $(document).ready(function(){
   $('#bidResultsbtn').click(function() {
     myTable.displayBidResults();
   });
-  $('#playGamebtn').click(function() {
-    myTable.playGame();
+  $('#playGamebtn').click(function(myTable) {
+    var myHand = new playHand(myTable);
+    console.log(myTable);
+    myHand.startHand(myTable);
   });
   var myTable = new bridgeTable;
 });
