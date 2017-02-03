@@ -45,6 +45,10 @@ $(document).ready(function(){
     Ace: 4,
   }
   var numOfPlayers = 4;
+  var numConsecutivePasses = 3;
+  var maxNumOfRounds = 7;
+  var aBook = 6;
+  var numTricksInAGame = 13;
   function playCard(rank,suit,chair) {
     this.rank = rank;
     this.suit = suit;
@@ -71,12 +75,14 @@ $(document).ready(function(){
         //there are 13 playingCards in the hand.
         child = e1.target.parentElement;
         var i = 0;
+        //find the index of which card clicked
         while( (child = child.previousSibling) != null ) 
           i++;
-        console.log("current Card "+i);
-        console.log(self.currCards[i]);
-        if (checkLegitPlay(self,i,n)) {
+        if (checkLegitPlay(self,i)) {
           self.trick.push(self.currCards[i]);
+          moveCardToCenter(self,i);
+          self.playTable.hands[n].removeCardFromHand(self.currCards[i]);
+          return true;
         }
         else
           alert("must follow suit if you can");
@@ -84,12 +90,50 @@ $(document).ready(function(){
       });
     }
 
-    checkLegitPlay = function(self,i,n) {
+    checkLegitPlay = function(self,i) {
       if (self.trick.length == 0) {
         return true;
       }
       else if (self.currCards[i].suit == trick[0].suit)
         return true;
+      else if (suitNotInHand(self,n,trick[0].suit))
+        return true;
+      else
+        return false;
+    }
+
+    suitNotInHand = function(self,n,leadSuit) {
+      var theHand = self.hands[n];
+      if ((leadSuit == Spades)&& (self.hands[n].spades.length == 0))
+        return true;
+      else if ((leadSuit == Hearts) && (self.hands[n].hearts.length == 0))
+        return true;  
+      else if ((leadSuit == Diamonds) && (self.hands[n].diamonds.length == 0))
+        return true;     
+      else if ((leadSuit == Clubs) && (self.hands[n].clubs.length == 0))
+        return true;
+      else
+        return false;
+    }
+ 
+    moveCardToCenter = function(self,i,n) {
+      //i is the card index
+      //n is the seat position
+      el = $('#currTrickDiv');
+      el.html('');
+      card = self.currCards[i]; 
+      //puts the card in currTrickDiv
+      el.append(card.getHTML());
+      //get the variable of currTrickDiv
+      var trick = document.getElementById("currTrickDiv");
+      //gets the playingCard in currTrickDiv, I want to just add
+      //an idName to the playingCard div but I haven't been able to
+      //do that
+      var c = trick.getElementsByClassName("playingCard")[0];
+      c.id = "eastTrick";
+      console.log("move card to center");
+      console.log(self);
+      console.log(i);
     }
 
     this.addCardToTrick = function(){
@@ -113,7 +157,6 @@ $(document).ready(function(){
         //this.trick.push(this.listenToCards(turnDir));
         this.listenToCards(whoseTurn,turnDir);
       }
-      this.chooseFrom
     }
   }
 
@@ -140,6 +183,7 @@ $(document).ready(function(){
         return 1;
       return 0;
     }
+
     this.addCardToHand = function(card) {
       switch (card.suit) {
         case "S":
@@ -156,12 +200,15 @@ $(document).ready(function(){
           break;
       }
     }
+ 
+    this.removeCardFromHand = function(card) {
+      console.log("remove Card from hand");
+      console.log(card);
+    }
 
     this.flipCards = function(direction) {
       var dirDiv = document.getElementById(direction);
       var c = dirDiv.getElementsByClassName("playingCard");
-      console.log("card flipping");
-      console.log(direction);
       for (var i = 0; i < c.length; i++) {
         var front = c[i].getElementsByClassName("front")[0];
         if (front.style.visibility == "hidden") {
@@ -177,12 +224,12 @@ $(document).ready(function(){
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
-      //console.log(hand);
       for(var i = 0; i < hand.length; i++) {
-        el.append(hand[i].getHTML());
+        el.append(hand[i].getHTML("none"));
         var allCards = document.getElementsByClassName("playingCard");
         var lastCard = allCards[allCards.length-1];
         lastCard.style.left = -i*55+"px";
+        lastCard.style.zIndex = i;
       }
     }
   }
@@ -247,9 +294,7 @@ $(document).ready(function(){
       else 
         this.defender1 = this.bidder + 1;
       this.defender2 = this.partner[this.defender1];
-      console.log(this.bidder);
-      console.log(this.dummy);
-      this.tricksNeeded = parseInt(this.contract)+6;
+      this.tricksNeeded = parseInt(this.contract)+aBook;
       $("#bidderDir").html("Bidder: "+this.table[this.bidder]);
       $('#dummyDir').html("Dummy: "+this.table[this.dummy]);
       $('#contract').html("Contract: "+this.contract+" "+this.trump);
@@ -369,7 +414,7 @@ $(document).ready(function(){
       //the last person to PASS, have to do % because there are many rounds.
       var lastPASS = (history.length-1)%numOfPlayers;
       //lastBidder is last person to make a non-PASS bid
-      if (lastPASS == 3)
+      if (lastPASS == numConsecutivePasses)
         //because 1 and 2 also passed.
         var lastBidder = 0;
       else
@@ -381,7 +426,7 @@ $(document).ready(function(){
         if (trump == history[i][1])
           //the first person on the team to bid trump is the bidder
           //need a mod 4 if they started bidding that suit after the first round.       
-          return i%4;
+          return i%numOfPlayers;
       }
     }
 
@@ -411,7 +456,7 @@ $(document).ready(function(){
     changeBidder = function(self) {
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       self.currentPos += 1;
-      if (self.currentPos == 4) {
+      if (self.currentPos == numOfPlayers) {
         //after the 4th seat go back to first
         self.currentPos = 0;
         //advance the row
@@ -424,7 +469,7 @@ $(document).ready(function(){
         x = round.insertCell(-1);
         x.innerHTML = "RND "+self.currentRow;
       }
-      if ((self.currentRow == 7) && (self.currentPos == 4)) {
+      if ((self.currentRow == maxNumOfRounds) && (self.currentPos == numOfPlayers)) {
         biddingOver(self);
       }
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
