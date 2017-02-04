@@ -256,16 +256,15 @@ $(document).ready(function(){
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
-      console.log("rebuild hand "+hand);
+      var handDiv = document.getElementById(idName);
       for(var j = 0; j < hand.length; j++) {
         el.append(hand[j].getHTML());
-        var allCards = document.getElementsByClassName("playingCard");
-        console.log(allCards.length);
-        var lastCard = allCards[allCards.length-1];
-        lastCard.style.left = -j*45+"px";
-        lastCard.style.zIndex = j;
-        console.log(j);
-        console.log(lastCard);
+      }
+      var cardsInHand = handDiv.getElementsByClassName("playingCard");
+      for (var i = cardsInHand.length-1; i >= 0; i--) {
+        var card = cardsInHand[i];
+        card.style.left = -i*55+"px";
+        card.style.zIndex = i;
       }
     }
   }
