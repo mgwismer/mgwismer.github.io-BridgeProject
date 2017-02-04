@@ -27,85 +27,85 @@
         <h5> <input type="button" id="northFlip" value="North Hand" /></h5>
         <div id="northHand" class="playingHand"></div> 
       </div>
-        <div class="westeastCont">
-          <h5> <input type="button" id="westFlip" value="West Hand"/> </h5>
-          <div id="westHand" class="playingHand">    
+      <div class="westCont">
+        <h5> <input type="button" id="westFlip" value="West Hand"/> </h5>
+        <div id="westHand" class="playingHand">    
+        </div>
+      </div>
+      <div class="eastCont">
+        <h5> <input type="button" id="eastFlip" value="East Hand" /> </h5>
+          <div id="eastHand" class="playingHand">
           </div>
-          <div class="eastCont">
-            <h5> <input type="button" id="eastFlip" value="East Hand" /> </h5>
-            <div id="eastHand" class="playingHand">
-            </div>
-          </div>
-        </div>
-        <div class="southCont">
-          <h5> <input type="button" id="southFlip" value="South Hand" /> </h5>
-          <div id="southHand" class="playingHand"></div> <br>
-        </div>
       </div>
-      <div class="bidResults">
-        <h5> BIDDING RESULTS </h5>
-        <h6 id="bidderDir"> </h6>
-        <h6 id="dummyDir"> </h6>
-        <h6 id="contract"> </h6>
-        <h6 id="leadDir"> </h6>
-        <h6 id="handReq"></h6>
+      <div class="southCont">
+        <h5> <input type="button" id="southFlip" value="South Hand" /> </h5>
+        <div id="southHand" class="playingHand"></div> <br>
       </div>
-      <div class="playResults">
-        <h5> PLAY RESULTS </h5>
+    </div>
+    <div class="bidResults">
+      <h5> BIDDING RESULTS </h5>
+      <h6 id="bidderDir"> </h6>
+      <h6 id="dummyDir"> </h6>
+      <h6 id="contract"> </h6>
+      <h6 id="leadDir"> </h6>
+      <h6 id="handReq"></h6>
+    </div>
+    <div class="playResults">
+      <h5> PLAY RESULTS </h5>
+    </div>
+    <div class="biddingDiv">
+      <div class="bidHead">
+        <h5> Current Bid: </h5> 
+        <h5 id="bidDir"> North </h5><br>
       </div>
-      <div class="biddingDiv">
-        <div class="bidHead">
-          <h5> Current Bid: </h5> 
-          <h5 id="bidDir"> North </h5><br>
-        </div>
-        <div class="bidSelectDiv">
-        <div class="amtDiv">
-        <form id="amtForm">
-          <select id="amtSelect">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>PASS</option>
-          </select>
+      <div class="bidSelectDiv">
+      <div class="amtDiv">
+      <form id="amtForm">
+        <select id="amtSelect">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>PASS</option>
+        </select>
+      </form>
+      </div>
+      <div>
+      <form id="suitForm">
+        <select id="suitSelect">
+          <option> NT </option>
+          <option>♠︎</option>
+          <option><span style="color:red">♥</span>︎</option>
+          <option><span style="color:red">♦︎</span></option>
+          <option>♣︎</option>
+        </select>
         </form>
-        </div>
-        <div>
-        <form id="suitForm">
-          <select id="suitSelect">
-            <option> NT </option>
-            <option>♠︎</option>
-            <option><span style="color:red">♥</span>︎</option>
-            <option><span style="color:red">♦︎</span></option>
-            <option>♣︎</option>
-          </select>
-          </form>
-        </div>
-        <div class="bidButton">
-          <h5>
-          <input type="button" id="submitBid" value="SUBMIT BID">
-          </h5>
-        </div>
-      </div> <!-- End bidSelectDiv -->
-      <div class="bidTableDiv">
-        <table id="bidTable">
-          <tr>
-            <td></td>
-            <td> North </td>
-            <td> East </td>
-            <td> South </td>
-            <td> West </td>
-          </tr>
-          <tr id="row1">
-            <td> RND 1</td>        
-          </tr>
-        </table>
       </div>
-      </div> <!-- End biddingDiv -->
-      <div id="currTrickDiv"></div>
+      <div class="bidButton">
+        <h5>
+        <input type="button" id="submitBid" value="SUBMIT BID">
+        </h5>
+      </div>
+    </div> <!-- End bidSelectDiv -->
+    <div class="bidTableDiv">
+      <table id="bidTable">
+        <tr>
+          <td></td>
+          <td> North </td>
+          <td> East </td>
+          <td> South </td>
+          <td> West </td>
+        </tr>
+        <tr id="row1">
+          <td> RND 1</td>        
+        </tr>
+      </table>
+    </div>
+    </div> <!-- End biddingDiv -->
+    <div id="currTrickDiv"></div>
   </div>
 </body>
 </html>

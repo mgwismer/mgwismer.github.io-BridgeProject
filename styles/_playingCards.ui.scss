@@ -54,27 +54,29 @@ body {
 	top: 0.25em;
 }
 
-#eastFlip {
-	position: relative;
-	bottom: 13em;
-	left: 33em;
-}
-
-#eastHand {
-	position: relative;
-	bottom: 13em;
-	left: 30em;
-}
-
 .northCont {
 	position: relative;
 	left: $leftNS;
+	//width: $handWidth;
 }
 
 .southCont {
 	position: relative;
 	bottom: 15em;
 	left: $leftNS;
+	//width: $handWidth;
+}
+
+.eastCont {
+    position: relative;
+	bottom: 13em;
+	left: 30em;
+	//width: $handWidth;
+}
+
+.westCont {
+	//width: $handWidth;
+	// width: 250px;
 }
 
 .playingCard .cornerBR {
@@ -172,12 +174,47 @@ body {
 #eastTrick {
 	position: absolute;
 	top: 20%;
-	left: 50%;
+	left: 60%;
 	width: 40%;
 	height: 60%;
 
 	.front {
-		visibility: visible;
+		visibility: visible !important;
+	}
+}
+
+#southTrick {
+	position: absolute;
+	top: 40%;
+	left: 40%;
+	width: 40%;
+	height: 60%;
+
+	.front {
+		visibility: visible !important;
+	}
+}
+#northTrick {
+	position: absolute;
+	top: 20%;
+	left: 20%;
+	width: 40%;
+	height: 60%;
+
+	.front {
+		visibility: visible !important;
+	}
+}
+
+#westTrick {
+	position: absolute;
+	top: 0%;
+	left: 40%;
+	width: 40%;
+	height: 60%;
+
+	.front {
+		visibility: visible !important;
 	}
 }
 /*

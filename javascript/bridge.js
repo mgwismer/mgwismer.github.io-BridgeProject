@@ -79,15 +79,46 @@ $(document).ready(function(){
         while( (child = child.previousSibling) != null ) 
           i++;
         if (checkLegitPlay(self,i)) {
-          self.trick.push(self.currCards[i]);
-          moveCardToCenter(self,i);
           self.playTable.hands[n].removeCardFromHand(self.currCards[i]);
+          var seatDir = self.playTable.table[self.chair];
+          var el = $('#'+seatDir+"Hand");
+          //remove the cards first before showing them, necessary for 
+          //when you remove a card.
+          var seatDir = self.playTable.table[n];
+          while (el.firstChild) {
+            el.removeChild(el.firstChild);
+          }
+          self.playTable.hands[n].showHand(seatDir+"Hand");
+          self.trick.push(self.currCards[i]);
+          moveCardToCenter(self,i,n);
           return true;
         }
         else
           alert("must follow suit if you can");
         console.log(self.trick);
       });
+    }
+
+    this.addCardToTrick = function(){
+      this.trick.push(playedCard);
+    }
+
+    this.playOneTrick = function() {
+
+    }
+    this.startHand = function() {
+      console.log("start Hand");
+      console.log(this.playTable);
+      var lead = this.playTable.defender1;
+      for (var i = 0; i < 1 ; i++) {
+        //holds the numerical value of whose turn
+        var whoseTurn = this.playDir[lead][i];
+        var turnDir = this.playTable.table[whoseTurn];
+        this.playTable.hands[whoseTurn].flipCards(turnDir+"Hand");
+        //add a picked card to the trick
+        //this.trick.push(this.listenToCards(turnDir));
+        this.listenToCards(whoseTurn,turnDir);
+      }
     }
 
     checkLegitPlay = function(self,i) {
@@ -114,11 +145,13 @@ $(document).ready(function(){
         return true;
       else
         return false;
-    }
- 
+      }
+   
     moveCardToCenter = function(self,i,n) {
       //i is the card index
       //n is the seat position
+      var seatDir = self.playTable.table[n];
+      //this is the div in the middle of the table
       el = $('#currTrickDiv');
       el.html('');
       card = self.currCards[i]; 
@@ -128,35 +161,9 @@ $(document).ready(function(){
       var trick = document.getElementById("currTrickDiv");
       //gets the playingCard in currTrickDiv, I want to just add
       //an idName to the playingCard div but I haven't been able to
-      //do that
+      //do that. Change the 0 to the last card added. 
       var c = trick.getElementsByClassName("playingCard")[0];
-      c.id = "eastTrick";
-      console.log("move card to center");
-      console.log(self);
-      console.log(i);
-    }
-
-    this.addCardToTrick = function(){
-      this.trick.push(playedCard);
-    }
-
-    this.playOneTrick = function() {
-
-    }
-    this.startHand = function() {
-      console.log("start Hand");
-      console.log(this.playTable);
-      var lead = this.playTable.defender1;
-      for (var i = 0; i < 1 ; i++) {
-        //holds the numerical value of whose turn
-        var whoseTurn = this.playDir[lead][i];
-        var turnDir = this.playTable.table[whoseTurn];
-        this.playTable.hands[whoseTurn].flipCards(turnDir+"Hand");
-        console.log(turnDir);
-        //add a picked card to the trick
-        //this.trick.push(this.listenToCards(turnDir));
-        this.listenToCards(whoseTurn,turnDir);
-      }
+      c.id = seatDir+"Trick";
     }
   }
 
@@ -202,8 +209,33 @@ $(document).ready(function(){
     }
  
     this.removeCardFromHand = function(card) {
-      console.log("remove Card from hand");
       console.log(card);
+      switch(card.suit) {
+        case "S": {
+          var pos = this.spades.map(function(e) {return e.rank; }).indexOf(card.rank);
+          this.spades.splice(pos,1);
+          console.log("remove "+card+" "+this.spades);
+          break;
+        }
+        case "H": {
+          var pos = this.hearts.map(function(e) {return e.rank; }).indexOf(card.rank);
+          this.hearts.splice(pos,1);
+          console.log("remove "+card+" "+this.hearts);
+          break;
+        }
+        case "D": {
+          var pos = this.diamonds.map(function(e) {return e.rank; }).indexOf(card.rank);
+          this.diamonds.splice(pos,1);
+          console.log("remove "+card+" "+this.diamonds);
+          break;
+        }
+        case "C": {
+          var pos = this.clubs.map(function(e) {return e.rank; }).indexOf(card.rank);
+          this.clubs.splice(pos,1);
+          console.log("remove "+card+" "+this.clubs);
+          break;
+        }
+      }
     }
 
     this.flipCards = function(direction) {
@@ -224,21 +256,18 @@ $(document).ready(function(){
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
-      for(var i = 0; i < hand.length; i++) {
-        el.append(hand[i].getHTML("none"));
+      console.log("rebuild hand "+hand);
+      for(var j = 0; j < hand.length; j++) {
+        el.append(hand[j].getHTML());
         var allCards = document.getElementsByClassName("playingCard");
+        console.log(allCards.length);
         var lastCard = allCards[allCards.length-1];
-        lastCard.style.left = -i*55+"px";
-        lastCard.style.zIndex = i;
+        lastCard.style.left = -j*45+"px";
+        lastCard.style.zIndex = j;
+        console.log(j);
+        console.log(lastCard);
       }
     }
-  }
-
-  var showError = function(msg){
-    $('#error').html(msg).show();
-    setTimeout(function(){
-      $('#error').fadeOut('slow');
-    },3000);
   }
 
   //Bridge Table object with methods
@@ -429,7 +458,6 @@ $(document).ready(function(){
           return i%numOfPlayers;
       }
     }
-
     //if there are 3 consecutive PASS bids, unless it is the first three, 
     //the bidding is over.
     threePasses = function(bids) {
@@ -446,13 +474,15 @@ $(document).ready(function(){
     updateTable = function(currRow, amount, suit) {
       var round = document.getElementById('row'+currRow);
       x = round.insertCell(-1);
-      if (amount != "PASS")
+      if (amount != "PASS") {
         x.innerHTML = amount+suit;
-      else
+      }
+      else {
         //amount is a number 1 through 7 or the word PASS
         x.innerHTML = amount;
+      }
     }
-
+  
     changeBidder = function(self) {
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       self.currentPos += 1;
@@ -485,7 +515,7 @@ $(document).ready(function(){
       myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
       document.getElementById('bidDir').innerHTML = "Bidding Over";
     }
-    
+  
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
       if (currBid[0] != 'PASS') {
