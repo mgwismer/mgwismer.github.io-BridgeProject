@@ -138,8 +138,8 @@ body {
   position: absolute;
   top: 20%;
   left: 60%;
-  width: 40%;
-  height: 60%; }
+  width: 35%;
+  height: 55%; }
   #eastTrick .front {
     visibility: visible !important; }
 
@@ -147,26 +147,26 @@ body {
   position: absolute;
   top: 40%;
   left: 40%;
-  width: 40%;
-  height: 60%; }
+  width: 35%;
+  height: 55%; }
   #southTrick .front {
     visibility: visible !important; }
 
 #northTrick {
   position: absolute;
-  top: 20%;
+  top: 0%;
   left: 20%;
-  width: 40%;
-  height: 60%; }
+  width: 35%;
+  height: 55%; }
   #northTrick .front {
     visibility: visible !important; }
 
 #westTrick {
   position: absolute;
-  top: 0%;
-  left: 40%;
-  width: 40%;
-  height: 60%; }
+  top: 20%;
+  left: 10%;
+  width: 35%;
+  height: 55%; }
   #westTrick .front {
     visibility: visible !important; }
 

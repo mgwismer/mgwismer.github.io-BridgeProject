@@ -49,11 +49,10 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 10;
+  var factorOverlap = 2.5;
 
-  function playCard(rank,suit,chair) {
-    this.rank = rank;
-    this.suit = suit;
+  function playCard(card,chair) {
+    this.pcard = card;
     this.chair = chair;
     this.trump = function() {
       return this.suit == table.trump;
@@ -66,18 +65,11 @@ $(document).ready(function(){
     this.playTable = table;
     this.trick = [];
     this.nextMove = true;
-    this.addCardToTrick = function(){
-      this.trick.push(playedCard);
-    }
-
-    this.playOneTrick = function() {
-
-    }
+    this.numTricksPlayed = 0;
     this.startRound = function() {
       this.lead = this.playTable.defender1;
       //holds the numerical value of whose turn
       this.index = 0;
-      this.numTricksPlayed = 0;
       this.whoseTurn = this.playDir[this.lead][this.index];
       self = this;
       this.addFlipButtons(self);
@@ -85,37 +77,51 @@ $(document).ready(function(){
 
     this.addFlipButtons = function(theTable) {
       $('#northFlip').click(function() {
-        if(self.playTable.table[self.whoseTurn] == "north") {
-          self.playTable.hands[self.whoseTurn].flipCards("northHand");
+        if(self.playTable.tableDir[self.whoseTurn] == "north") {
+          if (self.playTable.dummy != self.whoseTurn)
+            self.playTable.hands[self.whoseTurn].flipCards("northHand");
           listenToCards(self,"north");
         }
         else 
-          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");
+          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");
       });
       $('#eastFlip').click(function() {
-        if(self.playTable.table[self.whoseTurn] == "east") {
-          self.playTable.hands[self.whoseTurn].flipCards("eastHand");
+        if(self.playTable.tableDir[self.whoseTurn] == "east") {
+          if (self.playTable.dummy != self.whoseTurn)
+            self.playTable.hands[self.whoseTurn].flipCards("eastHand");
           listenToCards(self,"east");
         }
         else 
-          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");        
+          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");        
       });
       $('#southFlip').click(function() {
-        if(self.playTable.table[self.whoseTurn] == "south") {
-          self.playTable.hands[self.whoseTurn].flipCards("southHand");
+        if(self.playTable.tableDir[self.whoseTurn] == "south") {
+          if (self.playTable.dummy != self.whoseTurn)
+            self.playTable.hands[self.whoseTurn].flipCards("southHand");
           listenToCards(self,"south");
         }
         else 
-          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");             
+          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");             
       });
       $('#westFlip').click(function() {
-        if(self.playTable.table[self.whoseTurn] == "west") {
-          self.playTable.hands[self.whoseTurn].flipCards("westHand");
+        if(self.playTable.tableDir[self.whoseTurn] == "west") {
+          if (self.playTable.dummy != self.whoseTurn)
+            self.playTable.hands[self.whoseTurn].flipCards("westHand");
           listenToCards(self,"west");
         }
         else 
-          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");   
+          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");   
       });
+    }
+
+    showDummyHand = function(self) {
+      var dummyDir = self.playTable.tableDir[self.playTable.dummy];
+      var dirDiv = document.getElementById(dummyDir+"Hand");
+      var c = dirDiv.getElementsByClassName("playingCard");
+      for (var i = 0; i < c.length; i++) {
+        var front = c[i].getElementsByClassName("front")[0];
+        front.style.visibility = "visible";
+      }
     }
 
     listenToCards = function(self,dir) {
@@ -134,7 +140,7 @@ $(document).ready(function(){
           //this removes the card from the hand array object
           self.playTable.hands[self.whoseTurn].removeCardFromHand(self.currCards[i]);
           //self.whoseTurn is the index, table is the array of string directions
-          var seatDir = self.playTable.table[self.whoseTurn];
+          var seatDir = self.playTable.tableDir[self.whoseTurn];
           var el = $('#'+seatDir+"Hand");
           //This part removes the card from the display. Remove the cards first before showing them, necessary for 
           //when you remove a card.
@@ -142,13 +148,20 @@ $(document).ready(function(){
             el.removeChild(el.firstChild);
           }
           self.playTable.hands[self.whoseTurn].showHand(seatDir+"Hand");
-          self.trick.push(self.currCards[i]);
+          //saves the card and the seat that played it in the trick array.
+          var playedCard = new playCard(self.currCards[i],self.whoseTurn);
+          self.trick.push(playedCard);
+          console.log(self.trick);
           moveCardToCenter(self,i,self.whoseTurn);
-          if (self.index < numOfPlayers-1)
-            self.index++
-          else
+          showDummyHand(self);
+          if (self.index < numOfPlayers-1) {
+            self.index++;
+          }
+          else {
             alert("trick over function, Find who wins");
-            this.index = 0;
+            self.index = 0;
+          }
+          console.log("whose turn");
           self.whoseTurn = self.playDir[self.lead][self.index];
         }
         else
@@ -157,12 +170,14 @@ $(document).ready(function(){
     }
 
     checkLegitPlay = function(self,i) {
+      console.log("in check legit");
+      console.log(self.currCards[i]);
       if (self.trick.length == 0) {
         return true;
       }
-      else if (self.currCards[i].suit == self.trick[0].suit)
+      else if (self.currCards[i].suit == self.trick[0].pcard.suit)
         return true;
-      else if (suitNotInHand(self,self.whoseTurn,self.trick[0].suitString))
+      else if (suitNotInHand(self,self.whoseTurn,self.trick[0].pcard.suitString))
         return true;
       else
         return false;
@@ -185,15 +200,17 @@ $(document).ready(function(){
         return false;
       }
    
-    moveCardToCenter = function(self,i,n) {
+    moveCardToCenter = function(self,i) {
       //i is the card index
       //n is the seat position
-      var seatDir = self.playTable.table[n];
+      var seatDir = self.playTable.tableDir[self.whoseTurn];
       //this is the div in the middle of the table
       el = $('#'+seatDir+'Trick');
       el.html('');
       card = self.currCards[i]; 
       //puts the card in currTrickDiv
+      console.log("append card");
+      console.log(card.getHTML());
       el.append(card.getHTML());
       //get the variable of currTrickDiv
       //var trick = document.getElementById("currTrickDiv");
@@ -301,7 +318,7 @@ $(document).ready(function(){
       var cardsInHand = handDiv.getElementsByClassName("playingCard");
       for (var i = cardsInHand.length-1; i >= 0; i--) {
         var card = cardsInHand[i];
-        card.style.left = -i*2+"em";
+        card.style.left = -i*factorOverlap+"em";
         card.style.zIndex = i;
       }
     }
@@ -309,10 +326,10 @@ $(document).ready(function(){
 
   //Bridge Table object with methods
   function bridgeTable() {
-    this.table = ["north", "east","south","west"];
+    this.tableDir = ["north", "east","south","west"];
     this.partner = [2, 3, 0, 1];
     this.currentPos = 0;
-    this.currentBidder = this.table[this.currentPos];
+    this.currentBidder = this.tableDir[this.currentPos];
     this.trump = null;
     this.contract = 0;
     this.tricksNeeded = 7;
@@ -351,7 +368,7 @@ $(document).ready(function(){
       $('.biddingDiv').css("display","none");
       //this is the person who took the bid and is playing
       //this.player is a number (0-3) while this.playerDir is a word (i.e north, east)
-      this.bidderDir = this.table[this.bidder];
+      this.bidderDir = this.tableDir[this.bidder];
       this.dummy = this.determineDummy();
       //direction to left of bidder is defender1 and the lead
       if (this.bidder == 3)
@@ -360,11 +377,11 @@ $(document).ready(function(){
         this.defender1 = this.bidder + 1;
       this.defender2 = this.partner[this.defender1];
       this.tricksNeeded = parseInt(this.contract)+aBook;
-      $("#bidderDir").html("Bidder: "+this.table[this.bidder]);
-      $('#dummyDir').html("Dummy: "+this.table[this.dummy]);
+      $("#bidderDir").html("Bidder: "+this.tableDir[this.bidder]);
+      $('#dummyDir').html("Dummy: "+this.tableDir[this.dummy]);
       $('#contract').html("Contract: "+this.contract+" "+this.trump);
-      $('#leadDir').html("Lead Dir: "+this.table[this.defender1]);
-      $('#handReq').html(this.table[this.bidder]+"/"+this.table[this.dummy]+" must take "+this.tricksNeeded+" in order to make their bid");
+      $('#leadDir').html("Lead Dir: "+this.tableDir[this.defender1]);
+      $('#handReq').html(this.tableDir[this.bidder]+"/"+this.tableDir[this.dummy]+" must take "+this.tricksNeeded+" in order to make their bid");
       $('.playResults').css("display","block");   
     }
 
@@ -416,7 +433,7 @@ $(document).ready(function(){
       var self = this;
       self.currBid = [this.amount, this.suit];
       //myTable.table is the array of directions
-      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
       //a button to submit the bid.
       subevt = $('#submitBid');
       subevt.css("visibility","visible");
@@ -505,7 +522,7 @@ $(document).ready(function(){
     }
   
     changeBidder = function(self) {
-      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
       self.currentPos += 1;
       if (self.currentPos == numOfPlayers) {
         //after the 4th seat go back to first
@@ -523,7 +540,7 @@ $(document).ready(function(){
       if ((self.currentRow == maxNumOfRounds) && (self.currentPos == numOfPlayers)) {
         biddingOver(self);
       }
-      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
       //Tells the user which direction is the current bidder
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
@@ -533,7 +550,7 @@ $(document).ready(function(){
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
       bidRes = $('#playGamebtn').css("visibility","visible");
-      myTable.hands[self.currentPos].flipCards(myTable.table[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
       document.getElementById('bidDir').innerHTML = "Bidding Over";
     }
   
