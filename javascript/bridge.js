@@ -49,6 +49,8 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
+  var factorOverlap = 5;
+
   function playCard(rank,suit,chair) {
     this.rank = rank;
     this.suit = suit;
@@ -59,46 +61,11 @@ $(document).ready(function(){
   }
 
   function playHand(table) {
-    //if 0 leads then the order is [0,1,2,3], if 1 leads the order is [1,2,3,0]
+    //if 0 leads then the order is [0,1,2,3], if 1 leads the order is [1,2,3,0] etc
     this.playDir = [[0,1,2,3],[1,2,3,0],[2,3,0,1],[3,0,1,2]];
     this.playTable = table;
     this.trick = [];
-    this.listenToCards = function(n,dir) {
-      //this is where the event listeners are added to the hand
-      var currHandDiv = document.getElementById(dir+"Hand");
-      this.currCards = this.playTable.hands[n].completeHand();
-      this.chair = n;
-      //need to do this to pass the object into the event listener
-      self = this
-      currHandDiv.addEventListener("click", function(e1){
-        //when you click you get the front which is a child of playingCard
-        //there are 13 playingCards in the hand.
-        child = e1.target.parentElement;
-        var i = 0;
-        //find the index of which card clicked
-        while( (child = child.previousSibling) != null ) 
-          i++;
-        if (checkLegitPlay(self,i)) {
-          self.playTable.hands[n].removeCardFromHand(self.currCards[i]);
-          var seatDir = self.playTable.table[self.chair];
-          var el = $('#'+seatDir+"Hand");
-          //remove the cards first before showing them, necessary for 
-          //when you remove a card.
-          var seatDir = self.playTable.table[n];
-          while (el.firstChild) {
-            el.removeChild(el.firstChild);
-          }
-          self.playTable.hands[n].showHand(seatDir+"Hand");
-          self.trick.push(self.currCards[i]);
-          moveCardToCenter(self,i,n);
-          return true;
-        }
-        else
-          alert("must follow suit if you can");
-        console.log(self.trick);
-      });
-    }
-
+    this.nextMove = true;
     this.addCardToTrick = function(){
       this.trick.push(playedCard);
     }
@@ -106,42 +73,112 @@ $(document).ready(function(){
     this.playOneTrick = function() {
 
     }
-    this.startHand = function() {
-      console.log("start Hand");
-      console.log(this.playTable);
-      var lead = this.playTable.defender1;
-      for (var i = 0; i < 1 ; i++) {
-        //holds the numerical value of whose turn
-        var whoseTurn = this.playDir[lead][i];
-        var turnDir = this.playTable.table[whoseTurn];
-        this.playTable.hands[whoseTurn].flipCards(turnDir+"Hand");
-        //add a picked card to the trick
-        //this.trick.push(this.listenToCards(turnDir));
-        this.listenToCards(whoseTurn,turnDir);
-      }
+    this.startRound = function() {
+      this.lead = this.playTable.defender1;
+      //holds the numerical value of whose turn
+      this.index = 0;
+      this.numTricksPlayed = 0;
+      this.whoseTurn = this.playDir[this.lead][this.index];
+      self = this;
+      this.addFlipButtons(self);
+    }
+
+    this.addFlipButtons = function(theTable) {
+      $('#northFlip').click(function() {
+        if(self.playTable.table[self.whoseTurn] == "north") {
+          self.playTable.hands[self.whoseTurn].flipCards("northHand");
+          listenToCards(self,"north");
+        }
+        else 
+          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");
+      });
+      $('#eastFlip').click(function() {
+        if(self.playTable.table[self.whoseTurn] == "east") {
+          console.log(self.playTable.hands);
+          console.log("turn "+self.whoseTurn);
+          self.playTable.hands[self.whoseTurn].flipCards("eastHand");
+          listenToCards(self,"east");
+        }
+        else 
+          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");        
+      });
+      $('#southFlip').click(function() {
+        if(self.playTable.table[self.whoseTurn] == "south") {
+          self.playTable.hands[self.whoseTurn].flipCards("southHand");
+          listenToCards(self,"south");
+        }
+        else 
+          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");             
+      });
+      $('#westFlip').click(function() {
+        if(self.playTable.table[self.whoseTurn] == "west") {
+          self.playTable.hands[self.whoseTurn].flipCards("westHand");
+          listenToCards(self,"west");
+        }
+        else 
+          alert("IT IS "+self.playTable.table[self.whoseTurn]+"'s turn");   
+      });
+    }
+
+    listenToCards = function(self,dir) {
+      //this is where the event listeners are added to the hand
+      var currHandDiv = document.getElementById(dir+"Hand");
+      self.currCards = self.playTable.hands[self.whoseTurn].completeHand();
+      currHandDiv.addEventListener("click", function(e1){
+        //when you click you get the front which is a child of playingCard
+        //there are 13 playingCards in the hand.
+        child = e1.target.parentElement;
+        var i = 0;
+        //find the index of which card clicked by checking how many siblings before it.
+        while( (child = child.previousSibling) != null ) 
+          i++;
+        if (checkLegitPlay(self,i)) {
+          //this removes the card from the hand array object
+          self.playTable.hands[self.whoseTurn].removeCardFromHand(self.currCards[i]);
+          //self.whoseTurn is the index, table is the array of string directions
+          var seatDir = self.playTable.table[self.whoseTurn];
+          var el = $('#'+seatDir+"Hand");
+          //This part removes the card from the display. Remove the cards first before showing them, necessary for 
+          //when you remove a card.
+          while (el.firstChild) {
+            el.removeChild(el.firstChild);
+          }
+          self.playTable.hands[self.whoseTurn].showHand(seatDir+"Hand");
+          self.trick.push(self.currCards[i]);
+          moveCardToCenter(self,i,self.whoseTurn);
+          if (self.index < numOfPlayers-1)
+            self.index++
+          else
+            alert("trick over function, Find who wins");
+            this.index = 0;
+          self.whoseTurn = self.playDir[self.lead][self.index];
+        }
+        else
+          alert("must follow suit if you can");
+      });
     }
 
     checkLegitPlay = function(self,i) {
       if (self.trick.length == 0) {
         return true;
       }
-      else if (self.currCards[i].suit == trick[0].suit)
+      else if (self.currCards[i].suit == self.trick[0].suit)
         return true;
-      else if (suitNotInHand(self,n,trick[0].suit))
+      else if (suitNotInHand(self,self.whoseTurn,self.trick[0].suit))
         return true;
       else
         return false;
     }
 
     suitNotInHand = function(self,n,leadSuit) {
-      var theHand = self.hands[n];
-      if ((leadSuit == Spades)&& (self.hands[n].spades.length == 0))
+      var currHand = self.playTable.hands[n];
+      if ((leadSuit == "Spades")&& (currHand.spades.length == 0))
         return true;
-      else if ((leadSuit == Hearts) && (self.hands[n].hearts.length == 0))
+      else if ((leadSuit == "Hearts") && (currHand.hearts.length == 0))
         return true;  
-      else if ((leadSuit == Diamonds) && (self.hands[n].diamonds.length == 0))
+      else if ((leadSuit == "Diamonds") && (currHand.diamonds.length == 0))
         return true;     
-      else if ((leadSuit == Clubs) && (self.hands[n].clubs.length == 0))
+      else if ((leadSuit == "Clubs") && (currHand.clubs.length == 0))
         return true;
       else
         return false;
@@ -263,7 +300,7 @@ $(document).ready(function(){
       var cardsInHand = handDiv.getElementsByClassName("playingCard");
       for (var i = cardsInHand.length-1; i >= 0; i--) {
         var card = cardsInHand[i];
-        card.style.left = -i*55+"px";
+        card.style.left = -i*2+"em";
         card.style.zIndex = i;
       }
     }
@@ -292,7 +329,7 @@ $(document).ready(function(){
       var south = new bridgeHand;
       var east = new bridgeHand;
       var west = new bridgeHand;
-      for(var j = 0; j < 13; j++) {
+      for(var j = 0; j < numTricksInAGame; j++) {
         north.addCardToHand(cardDeck.draw());
         east.addCardToHand(cardDeck.draw());
         south.addCardToHand(cardDeck.draw());
@@ -304,7 +341,6 @@ $(document).ready(function(){
       south.sortHand();
       this.hands = [north, east, south, west];
       this.showHands(north, west, east, south);
-      this.addFlipButtons(north, west, east, south);
       var theBid = new bid;
       theBid.startBid(this);
     }
@@ -340,21 +376,6 @@ $(document).ready(function(){
       west.flipCards("westHand");
       east.flipCards("eastHand");
       south.flipCards("southHand");
-    }
-
-    this.addFlipButtons = function(dir1,dir2,dir3,dir4) {
-      $('#northFlip').click(function() {
-        dir1.flipCards("northHand");
-      });
-      $('#eastFlip').click(function() {
-        dir2.flipCards("eastHand");
-      });
-      $('#southFlip').click(function() {
-        dir3.flipCards("southHand");
-      });
-      $('#westFlip').click(function() {
-        dir4.flipCards("westHand");
-      });
     }
 
     this.playGame = function() {
@@ -565,7 +586,7 @@ $(document).ready(function(){
   });
   $('#playGamebtn').click(function() {
     var myHand = new playHand(myTable);
-    myHand.startHand();
+    myHand.startRound();
   });
   var myTable = new bridgeTable;
 });
