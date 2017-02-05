@@ -49,7 +49,7 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 5;
+  var factorOverlap = 10;
 
   function playCard(rank,suit,chair) {
     this.rank = rank;
@@ -94,8 +94,6 @@ $(document).ready(function(){
       });
       $('#eastFlip').click(function() {
         if(self.playTable.table[self.whoseTurn] == "east") {
-          console.log(self.playTable.hands);
-          console.log("turn "+self.whoseTurn);
           self.playTable.hands[self.whoseTurn].flipCards("eastHand");
           listenToCards(self,"east");
         }
@@ -164,14 +162,17 @@ $(document).ready(function(){
       }
       else if (self.currCards[i].suit == self.trick[0].suit)
         return true;
-      else if (suitNotInHand(self,self.whoseTurn,self.trick[0].suit))
+      else if (suitNotInHand(self,self.whoseTurn,self.trick[0].suitString))
         return true;
       else
         return false;
     }
 
     suitNotInHand = function(self,n,leadSuit) {
+      console.log("suit in hand, curr suit");
+      console.log(leadSuit);
       var currHand = self.playTable.hands[n];
+      console.log(currHand);
       if ((leadSuit == "Spades")&& (currHand.spades.length == 0))
         return true;
       else if ((leadSuit == "Hearts") && (currHand.hearts.length == 0))
@@ -189,18 +190,18 @@ $(document).ready(function(){
       //n is the seat position
       var seatDir = self.playTable.table[n];
       //this is the div in the middle of the table
-      el = $('#currTrickDiv');
+      el = $('#'+seatDir+'Trick');
       el.html('');
       card = self.currCards[i]; 
       //puts the card in currTrickDiv
       el.append(card.getHTML());
       //get the variable of currTrickDiv
-      var trick = document.getElementById("currTrickDiv");
+      //var trick = document.getElementById("currTrickDiv");
       //gets the playingCard in currTrickDiv, I want to just add
       //an idName to the playingCard div but I haven't been able to
       //do that. Change the 0 to the last card added. 
-      var c = trick.getElementsByClassName("playingCard")[0];
-      c.id = seatDir+"Trick";
+      //var c = trick.getElementsByClassName("playingCard")[0];
+      //c.id = seatDir+"Trick";
     }
   }
 
