@@ -7,9 +7,6 @@ if (window.addEventListener) {
 } else {
     window.onload = function() {initPlayingCards();}
 }
-function initPlayingCards() {
-    cardDeck = new playingCards();
-}
 */
 $(document).ready(function(){
   //check for bootstrap
@@ -44,12 +41,21 @@ $(document).ready(function(){
     King: 3,
     Ace: 4,
   }
+  //does not recognize the emoji
+  var suitSymbolToString = {
+    "NT": "NoTrump",
+    "♠︎": "Spades",
+    "♥︎": "Hearts",
+    "♦︎": "Diamonds",
+    "♣︎": "Clubs",
+  }
+
   var numOfPlayers = 4;
   var numConsecutivePasses = 3;
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 2.5;
+  var factorOverlap = 3;
 
   function playCard(card,chair) {
     this.pcard = card;
@@ -151,18 +157,22 @@ $(document).ready(function(){
           //saves the card and the seat that played it in the trick array.
           var playedCard = new playCard(self.currCards[i],self.whoseTurn);
           self.trick.push(playedCard);
-          console.log(self.trick);
           moveCardToCenter(self,i,self.whoseTurn);
           showDummyHand(self);
           if (self.index < numOfPlayers-1) {
             self.index++;
           }
           else {
-            alert("trick over function, Find who wins");
+            self.winCurrTrick = checkAndRecordTrickWin(self);
+            console.log("trick winner");
+            console.log(self.playTable.tableDir[self.winCurrTrick]);
+            //the chair that won the trick leads the next trick.
+            self.lead = self.winCurrTrick;
             self.index = 0;
           }
           console.log("whose turn");
           self.whoseTurn = self.playDir[self.lead][self.index];
+          console.log(self.whoseTurn);
         }
         else
           alert("must follow suit if you can");
@@ -183,11 +193,52 @@ $(document).ready(function(){
         return false;
     }
 
+    checkAndRecordTrickWin = function(self) {
+      if (trumpSuitInTrick(self.playTable.trump,self.trick)) {
+        //if trump is played that becomes the winning suit.
+        var winTrick = highestRankSuit(self.trick,self.playTable.trump);
+      }
+      else
+        //otherwise the suit that was lead is the winning suit.
+        var winTrick = highestRankSuit(self.trick,self.trick[0].pcard.suitString);
+      return winTrick;
+    }
+
+    //Puts all the cards that are in the winning suit into a separate array, winSuitCards,
+    //and then sorts that array, according to rank, to determine which card takes the trick.
+    //The winning suit is trump and if no trump, is the lead suit.
+    highestRankSuit = function(theTrick, winningSuit) {
+      var winSuitCards = [];
+      for (var i = 0; i < numOfPlayers; i++) {
+        if (theTrick[i].pcard.suitString == winningSuit)
+          winSuitCards.push(theTrick[i]);
+      }
+      winSuitCards.sort(compareRank);
+      console.log("win");
+      console.log(winSuitCards[0]);
+      //the person who through the highest card in the winning suit wins the trick.
+      return winSuitCards[numOfPlayers-1].chair;
+    }
+
+    compareRank = function(a,b) {
+      if (cardRank[a.pcard.rankString] < cardRank[b.pcard.rankString])
+        return -1;
+      if (cardRank[a.pcard.rankString] > cardRank[b.pcard.rankString])
+        return 1;
+      return 0;
+    }
+
+    trumpSuitInTrick = function(trump,playedCards) {
+      for(var i = 0; i < numOfPlayers; i++) {
+        if (suitSymbolToString[trump] == playedCards[i].pcard.suitString)
+          return true;
+      }
+      return false;
+    }
+
+    //a player must follow suit if they can. This function checks whether they can.
     suitNotInHand = function(self,n,leadSuit) {
-      console.log("suit in hand, curr suit");
-      console.log(leadSuit);
       var currHand = self.playTable.hands[n];
-      console.log(currHand);
       if ((leadSuit == "Spades")&& (currHand.spades.length == 0))
         return true;
       else if ((leadSuit == "Hearts") && (currHand.hearts.length == 0))
@@ -198,7 +249,7 @@ $(document).ready(function(){
         return true;
       else
         return false;
-      }
+    }
    
     moveCardToCenter = function(self,i) {
       //i is the card index
@@ -461,18 +512,13 @@ $(document).ready(function(){
           }
           else {
             updateTable(self.currentRow, bidamt, bidsuit);
-            myTable.trump = self.determineTrump(self);
+            myTable.trump = self.currBid[1];
             myTable.contract = self.currBid[0];
             myTable.bidder = self.determineBidder(self.history,myTable.trump);
             biddingOver(self);
           }
         } //end if legit bid
       }); //end click event
-    }
-   
-    //trump is always the last suit that was bid.
-    this.determineTrump = function() {
-      return this.currBid[1];
     }
 
     //the first person to bid the trump suit who is also a partner 
