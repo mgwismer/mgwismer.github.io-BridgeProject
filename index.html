@@ -41,76 +41,84 @@
         <h5> <input type="button" id="southFlip" value="South Hand" /> </h5>
         <div id="southHand" class="playingHand"></div> <br>
       </div>
-    </div>
-    <div class="bidResults">
-      <h5> BIDDING RESULTS </h5>
-      <h6 id="bidderDir"> </h6>
-      <h6 id="dummyDir"> </h6>
-      <h6 id="contract"> </h6>
-      <h6 id="leadDir"> </h6>
-      <h6 id="handReq"></h6>
-    </div>
-    <div class="playResults">
-      <h5> PLAY RESULTS </h5>
-    </div>
-    <div class="biddingDiv">
-      <div class="bidHead">
-        <h5> Current Bid: </h5> 
-        <h5 id="bidDir"> North </h5><br>
+      <div class="bidResults">
+        <h5> BIDDING RESULTS </h5>
+        <h6 id="bidderDir"> </h6>
+        <h6 id="dummyDir"> </h6>
+        <h6 id="contract"> </h6>
+        <h6 id="leadDir"> </h6>
+        <h6 id="handReq"></h6>
       </div>
-      <div class="bidSelectDiv">
-      <div class="amtDiv">
-      <form id="amtForm">
-        <select id="amtSelect">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>PASS</option>
-        </select>
-      </form>
-      </div>
-      <div>
-      <form id="suitForm">
-        <select id="suitSelect">
-          <option> NT </option>
-          <option>♠︎</option>
-          <option>♥︎</option>
-          <option>♦︎</option>
-          <option>♣︎</option>
-        </select>
+      <div class="biddingDiv">
+        <div class="bidHead">
+          <h5> Current Bid: </h5> 
+          <h5 id="bidDir"> North </h5><br>
+        </div>
+        <div class="bidSelectDiv">
+        <div class="amtDiv">
+        <form id="amtForm">
+          <select id="amtSelect">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>PASS</option>
+          </select>
         </form>
+        </div>
+        <div>
+        <form id="suitForm">
+          <select id="suitSelect">
+            <option> NT </option>
+            <option>♠︎</option>
+            <option>♥︎</option>
+            <option>♦︎</option>
+            <option>♣︎</option>
+          </select>
+          </form>
+        </div>
+        <div class="bidButton">
+          <h5>
+          <input type="button" id="submitBid" value="SUBMIT BID">
+          </h5>
+        </div>
+      </div> <!-- End bidSelectDiv -->
+      <div class="bidTableDiv">
+        <table id="bidTable">
+          <tr>
+            <td></td>
+            <td> North </td>
+            <td> East </td>
+            <td> South </td>
+            <td> West </td>
+          </tr>
+          <tr id="row1">
+            <td> RND 1</td>        
+          </tr>
+        </table>
       </div>
-      <div class="bidButton">
-        <h5>
-        <input type="button" id="submitBid" value="SUBMIT BID">
-        </h5>
+      </div> <!-- End biddingDiv -->
+      <div class="resultsTableDiv">
+        <h5> PLAY RESULTS </h5>
+        <table id="resultsTable">
+          <tr>
+            <td> North/South</td>
+            <td> East/West </td>
+          </tr>
+            <td id="NSTricks"> 0 </td>
+            <td id="EWTricks"> 0 </td>
+        </table>
       </div>
-    </div> <!-- End bidSelectDiv -->
-    <div class="bidTableDiv">
-      <table id="bidTable">
-        <tr>
-          <td></td>
-          <td> North </td>
-          <td> East </td>
-          <td> South </td>
-          <td> West </td>
-        </tr>
-        <tr id="row1">
-          <td> RND 1</td>        
-        </tr>
-      </table>
-    </div>
-    </div> <!-- End biddingDiv -->
-    <div id="currTrickDiv">
-      <div id="northTrick"></div>
-      <div id="eastTrick"></div>
-      <div id="southTrick"></div>
-      <div id="westTrick"></div>
-    </div>
+      <div id="currTrickDiv">
+        <div id="northTrick"></div>
+        <div id="eastTrick"></div>
+        <div id="southTrick"></div>
+        <div id="westTrick"></div>
+      </div>
+    </div> <!-- end Bridge Table -->
   </div>
 </body>
 </html>

@@ -21,6 +21,7 @@ body {
 
 .bridgeTable {
 	border: 2px solid black;
+	height: 800px;
 }
 
 .playingHand {
@@ -79,91 +80,10 @@ body {
 	// width: 250px;
 }
 
-.playingCard .cornerBR {
-	left: auto;
-	top: auto;
-	right: 0.25em;
-	bottom: 0.25em;
-	}
-
-// .playingCard .flip {
-// 	-webkit-transform: rotate(180deg); 
-// 	-moz-transform: rotate(180deg);
-// 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
-// 	writing-mode: tb-rl;
-// }
-
-.playingCard .red {
-	color: #f00;
-}
-
-.playingCard .suit {
-	position: absolute;
-	z-index:2;
-}
-
-/* large center Ace style suit */
-.playingCard .suit0 {
-	font-size: 3em;
-	left: 0.3em;
-	top: 0.3em;
-}
-
-.playingCard .face {
-	position: absolute;
-	z-index:1;
-	border: 1px solid #000;
-	left: 0.6em;
-	top: 0.45em;
-	width: 2.5em;
-	height: 4.0em;
-}
-.bidResults {
-  position: relative;
-  bottom: 50em;
-  left: 50em;
-}
-
-.biddingDiv {
-	position: relative;
-	bottom: 50em;
-	left: 50em;
-}
-
-.bidHead {
-	display: flex;
-}
-
-.bidSelectDiv {
-	display: flex;
-}
-
-.bidButton {
-	position: relative;
-	bottom: 10px;
-	left: 5px;
-}
-#idSelect {
-	color: red;
-}
-
-#bidTable {
-	width: 26%;
-	th,td {
-		padding: 5px;
-	}
-}
-
-.playResults {
-	display: none;
-	position: relative;
-	bottom: 50em;
-	left: 50em;
-}
-
 #currTrickDiv {
-	position: relative;
-	bottom: 740px;
+	display: flex;
+	position: absolute;
+	bottom: 100px;
 	left: 270px;
 	border: 2px solid red;
 	height: 150px;
@@ -189,7 +109,6 @@ body {
 	left: 40%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
-
 	.front {
 		visibility: visible !important;
 	}
@@ -200,7 +119,6 @@ body {
 	left: 20%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
-
 	.front {
 		visibility: visible !important;
 	}
@@ -212,11 +130,90 @@ body {
 	left: 10%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
-
 	.front {
 		visibility: visible !important;
 	}
 }
+
+.biddingDiv {
+	position: absolute;
+	bottom: 5em;
+	left: 50em;
+}
+
+.bidResults {
+  position: relative;
+  bottom: 50em;
+  left: 50em;
+}
+
+.bidHead {
+	display: flex;
+}
+
+.bidSelectDiv {
+	display: flex;
+}
+
+.bidButton {
+	position: relative;
+	bottom: 10px;
+	left: 5px;
+}
+
+#bidTable {
+	width: 26%;
+	th,td {
+		padding: 5px;
+	}
+}
+
+.resultsTableDiv {
+	position: absolute;
+	width: 25%;
+	height: 25%;
+	right: 100px;
+	top: 500px;
+	bottom: 5px;
+}
+
+.playingCard .cornerBR {
+	left: auto;
+	top: auto;
+	right: 0.25em;
+	bottom: 0.25em;
+	}
+
+.playingCard .red {
+	color: #f00;
+}
+
+.playingCard .suit {
+	position: absolute;
+	z-index:2;
+}
+
+/* large center Ace style suit */
+.playingCard .suit0 {
+	font-size: 3em;
+	left: 0.3em;
+	top: 0.3em;
+}
+
+.playingCard .face {
+	position: absolute;
+	z-index: 1;
+	border: 1px solid #000;
+	left: 0.6em;
+	top: 0.45em;
+	width: 2.5em;
+	height: 4.0em;
+}
+
+#idSelect {
+	color: red;
+}
+
 /*
 .playingCard .J {
 background-image: url("img/J.gif");

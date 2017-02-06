@@ -49,15 +49,36 @@ $(document).ready(function(){
     "♦︎": "Diamonds",
     "♣︎": "Clubs",
   }
-  var theTeams = ["north/south", "east/west", "north/south", "east/west"];
+  var theTeams = [0, 1, 0, 1];
 
   var numOfPlayers = 4;
   var numConsecutivePasses = 3;
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 2.3;
+  var factorOverlap = 2.4;
 
+  function trickResults(contract, bidder) {
+    this.teams = [0,1];
+    this.theTeamsTricks = [0,0]
+    this.bidder = bidder;
+    this.contractTeam = theTeams[bidder];
+    this.contract = contract;
+    this.addToTrickCount = function(winChair) {
+      this.theTeamsTricks[this.teams[theTeams[winChair]]]++;
+      $("#NSTricks").html(this.theTeamsTricks[this.teams[theTeams[0]]]);
+      $("#EWTricks").html(this.theTeamsTricks[this.teams[theTeams[1]]]);
+    }
+    this.checkForMadeContract = function() {
+      var required = parseInt(this.contract)+6;
+      if (theTeamsTricks[this.contractTeam] == required) {
+        $(".resultsTableDiv").append("<h6> CONTRACT MADE </h6>");
+      }
+      else {
+       $(".resultsTableDiv").append("<h6> CONTRACT NOT MADE </h6>");
+      }
+    }
+  }
   function playCard(card,chair) {
     this.pcard = card;
     this.chair = chair;
@@ -74,12 +95,16 @@ $(document).ready(function(){
     this.nextMove = true;
     this.numTricksLeft = numTricksInAGame;
     this.startRound = function() {
+      this.results = new trickResults(this.playTable.contract, this.playTable.bidder);
       this.lead = this.playTable.defender1;
       //holds the numerical value of whose turn
       this.index = 0;
       this.whoseTurn = this.playDir[this.lead][this.index];
       self = this;
       this.addFlipButtons(self);
+      if (this.numTricksLeft == 0) {
+        this.results.checkForMadeContract();
+      }
     }
 
     this.addFlipButtons = function(theTable) {
@@ -98,9 +123,6 @@ $(document).ready(function(){
     }
 
     this.chooseACard = function(self, direction) {
-      console.log("in chooseACard");
-      console.log("tricks left "+self.numTricksLeft);
-      console.log("direction "+direction);
       if (self.numTricksLeft > 0) {
         //if it is your turn your cards will be flipped and listened to.
         if(self.playTable.tableDir[self.whoseTurn] == direction) {
@@ -158,8 +180,6 @@ $(document).ready(function(){
           //saves the card and the seat that played it in the trick array.
           var playedCard = new playCard(self.currCards[i],self.whoseTurn);
           self.trick.push(playedCard);
-          console.log("current trick");
-          console.log(self.trick);
           moveCardToCenter(self,i,self.whoseTurn);
           showDummyHand(self);
           if (self.index < numOfPlayers-1) {
@@ -212,6 +232,7 @@ $(document).ready(function(){
       else
         //otherwise the suit that was lead is the winning suit.
         var winTrick = highestRankSuit(self.trick,self.trick[0].pcard.suitString);
+      self.results.addToTrickCount(winTrick);
       return winTrick;
     }
 
@@ -391,9 +412,10 @@ $(document).ready(function(){
         el.append(hand[j].getHTML());
       }
       var cardsInHand = handDiv.getElementsByClassName("playingCard");
+      var cardFact = numTricksInAGame/cardsInHand.length
       for (var i = cardsInHand.length-1; i >= 0; i--) {
         var card = cardsInHand[i];
-        card.style.left = -i*factorOverlap+"em";
+        card.style.left = -(i*factorOverlap)+"em";
         card.style.zIndex = i;
       }
     }
