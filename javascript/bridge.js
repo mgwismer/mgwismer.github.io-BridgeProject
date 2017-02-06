@@ -49,6 +49,7 @@ $(document).ready(function(){
     "♦︎": "Diamonds",
     "♣︎": "Clubs",
   }
+  var theTeams = ["north/south", "east/west", "north/south", "east/west"];
 
   var numOfPlayers = 4;
   var numConsecutivePasses = 3;
@@ -71,7 +72,7 @@ $(document).ready(function(){
     this.playTable = table;
     this.trick = [];
     this.nextMove = true;
-    this.numTricksPlayed = 0;
+    this.numTricksLeft = numTricksInAGame;
     this.startRound = function() {
       this.lead = this.playTable.defender1;
       //holds the numerical value of whose turn
@@ -83,41 +84,33 @@ $(document).ready(function(){
 
     this.addFlipButtons = function(theTable) {
       $('#northFlip').click(function() {
-        if(self.playTable.tableDir[self.whoseTurn] == "north") {
-          if (self.playTable.dummy != self.whoseTurn)
-            self.playTable.hands[self.whoseTurn].flipCards("northHand");
-          listenToCards(self,"north");
-        }
-        else 
-          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");
+        self.chooseACard(self, "north");
       });
       $('#eastFlip').click(function() {
-        if(self.playTable.tableDir[self.whoseTurn] == "east") {
-          if (self.playTable.dummy != self.whoseTurn)
-            self.playTable.hands[self.whoseTurn].flipCards("eastHand");
-          listenToCards(self,"east");
-        }
-        else 
-          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");        
+        self.chooseACard(self, "east"); 
       });
       $('#southFlip').click(function() {
-        if(self.playTable.tableDir[self.whoseTurn] == "south") {
-          if (self.playTable.dummy != self.whoseTurn)
-            self.playTable.hands[self.whoseTurn].flipCards("southHand");
-          listenToCards(self,"south");
-        }
-        else 
-          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");             
+        self.chooseACard(self, "south");
       });
       $('#westFlip').click(function() {
-        if(self.playTable.tableDir[self.whoseTurn] == "west") {
+        self.chooseACard(self,"west");
+      });
+    }
+
+    this.chooseACard = function(self, direction) {
+      if (self.numTricksLeft > 0) {
+        //if it is your turn your cards will be flipped and listened to.
+        if(self.playTable.tableDir[self.whoseTurn] == direction) {
+          //don't flip the cards back if it is the dummy hand.
           if (self.playTable.dummy != self.whoseTurn)
-            self.playTable.hands[self.whoseTurn].flipCards("westHand");
-          listenToCards(self,"west");
+            self.playTable.hands[self.whoseTurn].flipCards(direction+"Hand");
+          listenToCards(self,direction);
         }
         else 
-          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn");   
-      });
+          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn"); 
+      }
+      else
+        alert("GAME OVER"); 
     }
 
     showDummyHand = function(self) {
@@ -142,6 +135,11 @@ $(document).ready(function(){
         //find the index of which card clicked by checking how many siblings before it.
         while( (child = child.previousSibling) != null ) 
           i++;
+        console.log("picked card");
+        console.log(self.currCards[i]);
+        console.log("trick length");
+        console.log(self.index);
+        console.log(checkLegitPlay(self,i));
         if (checkLegitPlay(self,i)) {
           //this removes the card from the hand array object
           self.playTable.hands[self.whoseTurn].removeCardFromHand(self.currCards[i]);
@@ -157,6 +155,8 @@ $(document).ready(function(){
           //saves the card and the seat that played it in the trick array.
           var playedCard = new playCard(self.currCards[i],self.whoseTurn);
           self.trick.push(playedCard);
+          console.log("current trick");
+          console.log(self.trick);
           moveCardToCenter(self,i,self.whoseTurn);
           showDummyHand(self);
           if (self.index < numOfPlayers-1) {
@@ -164,11 +164,17 @@ $(document).ready(function(){
           }
           else {
             self.winCurrTrick = checkAndRecordTrickWin(self);
-            console.log("trick winner");
-            console.log(self.playTable.tableDir[self.winCurrTrick]);
             //the chair that won the trick leads the next trick.
             self.lead = self.winCurrTrick;
+            //each trick starts at self.index 0.
             self.index = 0;
+            clearTheTable(self);
+            //remove all cards from the trick array, ready for new trick.
+            self.trick = [];
+            console.log("trick over");
+            console.log(self.trick.length);
+            //starts with 13 tricks left.
+            self.numTricksLeft--;
           }
           console.log("whose turn");
           self.whoseTurn = self.playDir[self.lead][self.index];
@@ -180,9 +186,10 @@ $(document).ready(function(){
     }
 
     checkLegitPlay = function(self,i) {
-      console.log("in check legit");
-      console.log(self.currCards[i]);
-      if (self.trick.length == 0) {
+      // console.log("in check legit");
+      // console.log(self.currCards[i]);
+      //could also check to see if self.index = 0
+      if (self.index == 0) {
         return true;
       }
       else if (self.currCards[i].suit == self.trick[0].pcard.suit)
@@ -215,9 +222,9 @@ $(document).ready(function(){
       }
       winSuitCards.sort(compareRank);
       console.log("win");
-      console.log(winSuitCards[0]);
-      //the person who through the highest card in the winning suit wins the trick.
-      return winSuitCards[numOfPlayers-1].chair;
+      console.log(winSuitCards);
+      //the person who threw the highest card in the winning suit wins the trick.
+      return winSuitCards[winSuitCards.length-1].chair;
     }
 
     compareRank = function(a,b) {
@@ -260,16 +267,15 @@ $(document).ready(function(){
       el.html('');
       card = self.currCards[i]; 
       //puts the card in currTrickDiv
-      console.log("append card");
-      console.log(card.getHTML());
       el.append(card.getHTML());
-      //get the variable of currTrickDiv
-      //var trick = document.getElementById("currTrickDiv");
-      //gets the playingCard in currTrickDiv, I want to just add
-      //an idName to the playingCard div but I haven't been able to
-      //do that. Change the 0 to the last card added. 
-      //var c = trick.getElementsByClassName("playingCard")[0];
-      //c.id = seatDir+"Trick";
+    }
+
+    clearTheTable = function(self) {
+      for (var i = numOfPlayers - 1; i >= 0; i--) {
+        var seatDir = self.playTable.tableDir[i];
+        el = document.getElementById(seatDir+"Trick");  
+        el.removeChild(el.firstChild);
+      }
     }
   }
 
@@ -315,30 +321,25 @@ $(document).ready(function(){
     }
  
     this.removeCardFromHand = function(card) {
-      console.log(card);
       switch(card.suit) {
         case "S": {
           var pos = this.spades.map(function(e) {return e.rank; }).indexOf(card.rank);
           this.spades.splice(pos,1);
-          console.log("remove "+card+" "+this.spades);
           break;
         }
         case "H": {
           var pos = this.hearts.map(function(e) {return e.rank; }).indexOf(card.rank);
           this.hearts.splice(pos,1);
-          console.log("remove "+card+" "+this.hearts);
           break;
         }
         case "D": {
           var pos = this.diamonds.map(function(e) {return e.rank; }).indexOf(card.rank);
           this.diamonds.splice(pos,1);
-          console.log("remove "+card+" "+this.diamonds);
           break;
         }
         case "C": {
           var pos = this.clubs.map(function(e) {return e.rank; }).indexOf(card.rank);
           this.clubs.splice(pos,1);
-          console.log("remove "+card+" "+this.clubs);
           break;
         }
       }
