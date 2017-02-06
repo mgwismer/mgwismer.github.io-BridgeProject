@@ -138,11 +138,11 @@ $(document).ready(function(){
         //find the index of which card clicked by checking how many siblings before it.
         while( (child = child.previousSibling) != null ) 
           i++;
-        console.log("picked card");
-        console.log(self.currCards[i]);
-        console.log("trick length");
-        console.log(self.index);
-        console.log(checkLegitPlay(self,i));
+        // console.log("picked card");
+        // console.log(self.currCards[i]);
+        // console.log("trick length");
+        // console.log(self.index);
+        // console.log(checkLegitPlay(self,i));
         if (checkLegitPlay(self,i)) {
           //this removes the card from the hand array object
           self.playTable.hands[self.whoseTurn].removeCardFromHand(self.currCards[i]);
@@ -298,6 +298,7 @@ $(document).ready(function(){
       var south = self.playTable.hands[2];
       var west = self.playTable.hands[3];
       self.playTable.showHands(north,east,south,west);
+      showDummyHand(self);
     }
   }
 
@@ -627,10 +628,6 @@ $(document).ready(function(){
   
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
-      console.log("legit bid");
-      console.log(suit);
-      console.log(currBid[1]);
-      console.log(suitOrder.indexOf(suit)+" "+suitOrder.indexOf(currBid[1]));
       if (currBid[0] != 'PASS') {
         if(amt > currBid[0]) 
           return true;
