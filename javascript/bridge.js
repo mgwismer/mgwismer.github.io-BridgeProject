@@ -56,7 +56,7 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 3;
+  var factorOverlap = 2.3;
 
   function playCard(card,chair) {
     this.pcard = card;
@@ -98,6 +98,9 @@ $(document).ready(function(){
     }
 
     this.chooseACard = function(self, direction) {
+      console.log("in chooseACard");
+      console.log("tricks left "+self.numTricksLeft);
+      console.log("direction "+direction);
       if (self.numTricksLeft > 0) {
         //if it is your turn your cards will be flipped and listened to.
         if(self.playTable.tableDir[self.whoseTurn] == direction) {
@@ -175,6 +178,7 @@ $(document).ready(function(){
             console.log(self.trick.length);
             //starts with 13 tricks left.
             self.numTricksLeft--;
+            removeCardListeners(self);
           }
           console.log("whose turn");
           self.whoseTurn = self.playDir[self.lead][self.index];
@@ -203,7 +207,7 @@ $(document).ready(function(){
     checkAndRecordTrickWin = function(self) {
       if (trumpSuitInTrick(self.playTable.trump,self.trick)) {
         //if trump is played that becomes the winning suit.
-        var winTrick = highestRankSuit(self.trick,self.playTable.trump);
+        var winTrick = highestRankSuit(self.trick,suitSymbolToString[self.playTable.trump]);
       }
       else
         //otherwise the suit that was lead is the winning suit.
@@ -215,6 +219,8 @@ $(document).ready(function(){
     //and then sorts that array, according to rank, to determine which card takes the trick.
     //The winning suit is trump and if no trump, is the lead suit.
     highestRankSuit = function(theTrick, winningSuit) {
+      console.log("winning suit");
+      console.log(winningSuit);
       var winSuitCards = [];
       for (var i = 0; i < numOfPlayers; i++) {
         if (theTrick[i].pcard.suitString == winningSuit)
@@ -276,6 +282,22 @@ $(document).ready(function(){
         el = document.getElementById(seatDir+"Trick");  
         el.removeChild(el.firstChild);
       }
+    }
+
+    removeCardListeners = function(self) {
+      $("#northHand").remove();
+      $("#eastHand").remove();
+      $("#southHand").remove();
+      $("#westHand").remove();
+      $(".northCont").append('<div id="northHand" class="playingHand" </div>');
+      $(".eastCont").append('<div id="eastHand" class="playingHand" </div>');
+      $(".southCont").append('<div id="southHand" class="playingHand" </div>');
+      $(".westCont").append('<div id="westHand" class="playingHand" </div>');
+      var north = self.playTable.hands[0];
+      var east = self.playTable.hands[1];
+      var south = self.playTable.hands[2];
+      var west = self.playTable.hands[3];
+      self.playTable.showHands(north,east,south,west);
     }
   }
 
@@ -410,7 +432,7 @@ $(document).ready(function(){
       east.sortHand();
       south.sortHand();
       this.hands = [north, east, south, west];
-      this.showHands(north, west, east, south);
+      this.showHands(north, east, south, west);
       var theBid = new bid;
       theBid.startBid(this);
     }
@@ -437,7 +459,7 @@ $(document).ready(function(){
       $('.playResults').css("display","block");   
     }
 
-    this.showHands = function(north, west, east, south) {
+    this.showHands = function(north, east, south, west) {
       north.showHand("northHand");
       north.flipCards("northHand");
       west.showHand("westHand");
@@ -505,6 +527,8 @@ $(document).ready(function(){
             //make the suit a null if bidamt is PASS
             bidsuit = null;
           //keep a history of all bids and PASSES (i.e. all submits)
+          console.log("current Bid");
+          console.log(self.currBid);
           self.history.push([bidamt, bidsuit]);
           //bidding is over if 3 PASSes in a row.
           if (!threePasses(self.history)) {
@@ -603,6 +627,10 @@ $(document).ready(function(){
   
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
+      console.log("legit bid");
+      console.log(suit);
+      console.log(currBid[1]);
+      console.log(suitOrder.indexOf(suit)+" "+suitOrder.indexOf(currBid[1]));
       if (currBid[0] != 'PASS') {
         if(amt > currBid[0]) 
           return true;
