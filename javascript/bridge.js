@@ -71,7 +71,10 @@ $(document).ready(function(){
     }
     this.checkForMadeContract = function() {
       var required = parseInt(this.contract)+6;
-      $("#finalResults").css("visibility","hidden");
+      console.log("check for contract");
+      console.log(this.theTeamsTricks);
+      console.log(this.contractTeam);
+      $("#finalResults").css("visibility","visible");
       if (this.theTeamsTricks[this.contractTeam] == required) {
         $("#finalResults").append("<h6> CONTRACT MADE </h6>");
       }
@@ -130,6 +133,8 @@ $(document).ready(function(){
     }
 
     this.chooseACard = function(self, direction) {
+      console.log("num Tricks left");
+      console.log(self.numTricksLeft);
       if (self.numTricksLeft > 0) {
         //if it is your turn your cards will be flipped and listened to.
         if(self.playTable.tableDir[self.whoseTurn] == direction) {
