@@ -71,11 +71,12 @@ $(document).ready(function(){
     }
     this.checkForMadeContract = function() {
       var required = parseInt(this.contract)+6;
-      if (theTeamsTricks[this.contractTeam] == required) {
-        $(".resultsTableDiv").append("<h6> CONTRACT MADE </h6>");
+      $("#finalResults").css("visibility","hidden");
+      if (this.theTeamsTricks[this.contractTeam] == required) {
+        $("#finalResults").append("<h6> CONTRACT MADE </h6>");
       }
       else {
-       $(".resultsTableDiv").append("<h6> CONTRACT NOT MADE </h6>");
+       $("#finalResults").append("<h6> CONTRACT NOT MADE </h6>");
       }
     }
   }
@@ -95,18 +96,24 @@ $(document).ready(function(){
     this.nextMove = true;
     this.numTricksLeft = numTricksInAGame;
     this.startRound = function() {
+      this.changeButtons();
+      $("#currTrickDiv").css("visibility", "visible");
       this.results = new trickResults(this.playTable.contract, this.playTable.bidder);
+      $(".resultsTableDiv").css("visibility","visible");
       this.lead = this.playTable.defender1;
       //holds the numerical value of whose turn
       this.index = 0;
       this.whoseTurn = this.playDir[this.lead][this.index];
       self = this;
       this.addFlipButtons(self);
-      if (this.numTricksLeft == 0) {
-        this.results.checkForMadeContract();
-      }
     }
-
+   
+    this.changeButtons = function() {
+      $("#northFlip").attr("value", "PLAY NORTH");
+      $("#eastFlip").attr("value", "PLAY EAST");
+      $("#westFlip").attr("value", "PLAY WEST");
+      $("#southFlip").attr("value", "PLAY SOUTH");
+    }
     this.addFlipButtons = function(theTable) {
       $('#northFlip').click(function() {
         self.chooseACard(self, "north");
@@ -129,13 +136,21 @@ $(document).ready(function(){
           //don't flip the cards back if it is the dummy hand.
           if (self.playTable.dummy != self.whoseTurn)
             self.playTable.hands[self.whoseTurn].flipCards(direction+"Hand");
+          else {
+            //when it is the dummy's turn you should flip her partner's cards.
+            var dummyPartner = self.playTable.partner[self.whoseTurn];
+            var nDirection = self.playTable.tableDir[dummyPartner];
+            self.playTable.hands[dummyPartner].flipCards(nDirection+"Hand");
+          }
           listenToCards(self,direction);
         }
         else 
           alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn"); 
       }
-      else
+      else {
+        self.results.checkForMadeContract();
         alert("GAME OVER"); 
+      }
     }
 
     showDummyHand = function(self) {
@@ -151,6 +166,8 @@ $(document).ready(function(){
     listenToCards = function(self,dir) {
       //this is where the event listeners are added to the hand
       var currHandDiv = document.getElementById(dir+"Hand");
+      console.log("hand direction");
+      console.log(currHandDiv);
       self.currCards = self.playTable.hands[self.whoseTurn].completeHand();
       currHandDiv.addEventListener("click", function(e1){
         //when you click you get the front which is a child of playingCard
@@ -160,27 +177,29 @@ $(document).ready(function(){
         //find the index of which card clicked by checking how many siblings before it.
         while( (child = child.previousSibling) != null ) 
           i++;
-        // console.log("picked card");
-        // console.log(self.currCards[i]);
-        // console.log("trick length");
-        // console.log(self.index);
-        // console.log(checkLegitPlay(self,i));
         if (checkLegitPlay(self,i)) {
           //this removes the card from the hand array object
           self.playTable.hands[self.whoseTurn].removeCardFromHand(self.currCards[i]);
           //self.whoseTurn is the index, table is the array of string directions
           var seatDir = self.playTable.tableDir[self.whoseTurn];
           var el = $('#'+seatDir+"Hand");
-          //This part removes the card from the display. Remove the cards first before showing them, necessary for 
+          //This part removes all the card from the display. Remove the cards first before showing them, necessary for 
           //when you remove a card.
           while (el.firstChild) {
             el.removeChild(el.firstChild);
+          }
+          //this is necessary because the bidder's hand is shown when it is dummy's turn.
+          //the bidder can always see both her and her partner's (i.e. dummy's) hand.
+          if (self.playTable.dummy == self.whoseTurn) {
+            bidderDir = self.playTable.tableDir[self.playTable.bidder];
+            self.playTable.hands[self.playTable.bidder].flipCards(bidderDir+"Hand");
           }
           self.playTable.hands[self.whoseTurn].showHand(seatDir+"Hand");
           //saves the card and the seat that played it in the trick array.
           var playedCard = new playCard(self.currCards[i],self.whoseTurn);
           self.trick.push(playedCard);
           moveCardToCenter(self,i,self.whoseTurn);
+          //the entire table can always see the dummy's hand.
           showDummyHand(self);
           if (self.index < numOfPlayers-1) {
             self.index++;
@@ -194,8 +213,6 @@ $(document).ready(function(){
             clearTheTable(self);
             //remove all cards from the trick array, ready for new trick.
             self.trick = [];
-            console.log("trick over");
-            console.log(self.trick.length);
             //starts with 13 tricks left.
             self.numTricksLeft--;
             removeCardListeners(self);
@@ -240,16 +257,12 @@ $(document).ready(function(){
     //and then sorts that array, according to rank, to determine which card takes the trick.
     //The winning suit is trump and if no trump, is the lead suit.
     highestRankSuit = function(theTrick, winningSuit) {
-      console.log("winning suit");
-      console.log(winningSuit);
       var winSuitCards = [];
       for (var i = 0; i < numOfPlayers; i++) {
         if (theTrick[i].pcard.suitString == winningSuit)
           winSuitCards.push(theTrick[i]);
       }
       winSuitCards.sort(compareRank);
-      console.log("win");
-      console.log(winSuitCards);
       //the person who threw the highest card in the winning suit wins the trick.
       return winSuitCards[winSuitCards.length-1].chair;
     }
@@ -289,6 +302,8 @@ $(document).ready(function(){
       //i is the card index
       //n is the seat position
       var seatDir = self.playTable.tableDir[self.whoseTurn];
+      console.log("in moveCardToCenter");
+      console.log(seatDir);
       //this is the div in the middle of the table
       el = $('#'+seatDir+'Trick');
       el.html('');
@@ -493,12 +508,6 @@ $(document).ready(function(){
       south.flipCards("southHand");
     }
 
-    this.playGame = function() {
-      console.log("game started");
-    }
-    this.gameDisplayResults = function() {
-      console.log("results");
-    }
     this.determineDummy = function() {
       return this.partner[this.bidder];
     }

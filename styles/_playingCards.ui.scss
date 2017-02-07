@@ -81,20 +81,27 @@ body {
 }
 
 #currTrickDiv {
-	display: flex;
+	display: inline;
 	position: absolute;
-	bottom: 100px;
-	left: 270px;
-	border: 2px solid red;
-	height: 150px;
+	top: 50px;
+	left: 50px;
+	height: 200px;
 	width: 150px;
 	z-index: 2;
+	visibility: visible;
+
+	#trickTable {
+	  	border: 2px solid red;
+	  	height: 150px;
+	  	width: 150px;
+		z-index: 2;
+	}
 }
 
 #eastTrick {
 	position: absolute;
 	top: 20%;
-	left: 60%;
+	right: 0%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
 
@@ -105,8 +112,8 @@ body {
 
 #southTrick {
 	position: absolute;
-	top: 40%;
 	left: 40%;
+	bottom: 0%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
 	.front {
@@ -127,7 +134,7 @@ body {
 #westTrick {
 	position: absolute;
 	top: 20%;
-	left: 10%;
+	left: 0%;
 	width: $cardTrickWidth;
 	height: $cardTrickHeight;
 	.front {
@@ -135,6 +142,9 @@ body {
 	}
 }
 
+#finalResults {
+	visibility: hidden;
+}
 .biddingDiv {
 	position: absolute;
 	bottom: 5em;
@@ -162,7 +172,7 @@ body {
 }
 
 #bidTable {
-	width: 26%;
+	width: 27%;
 	th,td {
 		padding: 5px;
 	}
@@ -175,6 +185,7 @@ body {
 	right: 100px;
 	top: 500px;
 	bottom: 5px;
+	visibility: hidden;
 }
 
 .playingCard .cornerBR {

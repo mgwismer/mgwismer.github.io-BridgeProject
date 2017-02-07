@@ -22,7 +22,7 @@
   <input type="button" id="playGamebtn" value="MAKE TRICKS" />
   <div class="container-fluid">
     <div class="bridgeTable">
-      <h2>Drawn Hands</h2> <br>
+      <h2></h2> <br>
       <div class="northCont">
         <h5> <input type="button" id="northFlip" value="North Hand" /></h5>
         <div id="northHand" class="playingHand"></div> 
@@ -88,6 +88,7 @@
       </div> <!-- End bidSelectDiv -->
       <div class="bidTableDiv">
         <table id="bidTable">
+        <col width="200">
           <tr>
             <td></td>
             <td> North </td>
@@ -111,12 +112,16 @@
             <td id="NSTricks"> 0 </td>
             <td id="EWTricks"> 0 </td>
         </table>
+        <div id="finalResults"> Final Results</div>
       </div>
       <div id="currTrickDiv">
-        <div id="northTrick"></div>
-        <div id="eastTrick"></div>
-        <div id="southTrick"></div>
-        <div id="westTrick"></div>
+        <h5> Current Trick </h5>
+        <div id="trickTable">
+          <div id="northTrick"></div>
+          <div id="eastTrick"></div>
+          <div id="southTrick"></div>
+          <div id="westTrick"></div>
+        </div>
       </div>
     </div> <!-- end Bridge Table -->
   </div>
