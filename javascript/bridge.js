@@ -56,7 +56,7 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 2.4;
+  var factorOverlap = 2.3;
 
   function trickResults(contract, bidder) {
     this.teams = [0,1];
@@ -71,9 +71,6 @@ $(document).ready(function(){
     }
     this.checkForMadeContract = function() {
       var required = parseInt(this.contract)+6;
-      console.log("check for contract");
-      console.log(this.theTeamsTricks);
-      console.log(this.contractTeam);
       $("#finalResults").css("visibility","visible");
       if (this.theTeamsTricks[this.contractTeam] == required) {
         $("#finalResults").append("<h6> CONTRACT MADE </h6>");
@@ -173,8 +170,6 @@ $(document).ready(function(){
     listenToCards = function(self,dir) {
       //this is where the event listeners are added to the hand
       var currHandDiv = document.getElementById(dir+"Hand");
-      console.log("hand direction");
-      console.log(currHandDiv);
       self.currCards = self.playTable.hands[self.whoseTurn].completeHand();
       currHandDiv.addEventListener("click", function(e1){
         //when you click you get the 'front' div which is a child of playingCard div
@@ -309,8 +304,6 @@ $(document).ready(function(){
       //i is the card index
       //n is the seat position
       var seatDir = self.playTable.tableDir[self.whoseTurn];
-      console.log("in moveCardToCenter");
-      console.log(seatDir);
       //this is the div in the middle of the table
       el = $('#'+seatDir+'Trick');
       el.html('');

@@ -32,6 +32,7 @@ body {
   visibility: hidden; }
 
 .bridgeTable {
+  border: 2px solid black;
   height: 800px; }
 
 .playingHand {
