@@ -741,15 +741,20 @@ $(document).ready(function(){
     }
   }
 
+  $('#learnButton').click(function() {
+    $('.frontImage').slideUp(3000);
+  });
   $('#dealCards').click(function() {
     removePlayingCards();
     myTable.createTable();
+    $('#currTrickDiv').css("visibility","hidden");
   });
   $('#bidResultsbtn').click(function() {
     myTable.displayBidResults();
   });
   $('#playGamebtn').click(function() {
     var myHand = new playHand(myTable);
+    $('#currTrickDiv').css("visibility","hidden");
     myHand.startRound();
   });
   $('#gameAgainbtn').click(function() {
