@@ -17,10 +17,17 @@
 </head>
 
 <body>
-  <input type="button" id="dealCards" value="DEAL CARDS"/>
-  <input type="button" id="bidResultsbtn" value="BID RESULTS" />
-  <input type="button" id="playGamebtn" value="MAKE TRICKS" />
   <div class="container-fluid">
+    <div class="gameButtons row">
+<!--       <div class="col-md-3"> space </div> -->
+      <div class="col-md-offset-4 col-md-6">
+        <input type="button" id="dealCards" value="DEAL CARDS"/>
+        <input type="button" id="bidResultsbtn" value="BID RESULTS" />
+        <input type="button" id="playGamebtn" value="MAKE TRICKS" />
+        <input type="button" id="gameAgainbtn" value="TRY AGAIN" />
+      </div>
+      <div class="col-md-3"></div>
+   </div>
     <div class="bridgeTable">
       <h2></h2> <br>
       <div class="northCont">
@@ -55,20 +62,20 @@
           <h5 id="bidDir"> North </h5><br>
         </div>
         <div class="bidSelectDiv">
-        <div class="amtDiv">
-        <form id="amtForm">
-          <select id="amtSelect">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>PASS</option>
-          </select>
-        </form>
-        </div>
+          <div class="amtDiv">
+          <form id="amtForm">
+            <select id="amtSelect">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>PASS</option>
+            </select>
+          </form>
+          </div>
         <div>
         <form id="suitForm">
           <select id="suitSelect">
@@ -88,9 +95,9 @@
       </div> <!-- End bidSelectDiv -->
       <div class="bidTableDiv">
         <table id="bidTable">
-        <col width="200">
+        <col width="200px">
           <tr>
-            <td></td>
+            <td width="200px"></td>
             <td> North </td>
             <td> East </td>
             <td> South </td>

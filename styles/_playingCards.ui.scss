@@ -19,6 +19,15 @@ body {
   width: 860px;
 }
 
+.gameButtons {
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+}
+
+#gameAgainbtn {
+  visibility: hidden;
+}
 .bridgeTable {
 	border: 2px solid black;
 	height: 800px;
@@ -146,15 +155,17 @@ body {
 	visibility: hidden;
 }
 .biddingDiv {
+	display: block;
 	position: absolute;
-	bottom: 5em;
+	top: 2em;
 	left: 50em;
 }
 
 .bidResults {
-  position: relative;
-  bottom: 50em;
+  position: absolute;
+  top: 2em;
   left: 50em;
+  visibility: hidden;
 }
 
 .bidHead {
@@ -172,7 +183,7 @@ body {
 }
 
 #bidTable {
-	width: 27%;
+	width: 30%;
 	th,td {
 		padding: 5px;
 	}
@@ -182,9 +193,8 @@ body {
 	position: absolute;
 	width: 25%;
 	height: 25%;
-	right: 100px;
-	top: 500px;
-	bottom: 5px;
+	left: 50em;
+	top: 20em;
 	visibility: hidden;
 }
 
@@ -219,6 +229,10 @@ body {
 	top: 0.45em;
 	width: 2.5em;
 	height: 4.0em;
+}
+
+.playingCard .front:hover {
+	background-color: grey;
 }
 
 #idSelect {

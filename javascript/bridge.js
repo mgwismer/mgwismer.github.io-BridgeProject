@@ -99,6 +99,7 @@ $(document).ready(function(){
     this.nextMove = true;
     this.numTricksLeft = numTricksInAGame;
     this.startRound = function() {
+      $("#gameAgainbtn").css("visibility","visible");
       this.changeButtons();
       $("#currTrickDiv").css("visibility", "visible");
       this.results = new trickResults(this.playTable.contract, this.playTable.bidder);
@@ -117,6 +118,7 @@ $(document).ready(function(){
       $("#westFlip").attr("value", "PLAY WEST");
       $("#southFlip").attr("value", "PLAY SOUTH");
     }
+
     this.addFlipButtons = function(theTable) {
       $('#northFlip').click(function() {
         self.chooseACard(self, "north");
@@ -175,8 +177,8 @@ $(document).ready(function(){
       console.log(currHandDiv);
       self.currCards = self.playTable.hands[self.whoseTurn].completeHand();
       currHandDiv.addEventListener("click", function(e1){
-        //when you click you get the front which is a child of playingCard
-        //there are 13 playingCards in the hand.
+        //when you click you get the 'front' div which is a child of playingCard div
+        //there are 13 playingCards in the hand. We want the playing card
         child = e1.target.parentElement;
         var i = 0;
         //find the index of which card clicked by checking how many siblings before it.
@@ -458,6 +460,9 @@ $(document).ready(function(){
     this.defender2 = null;
     this.createTable = function() {
       console.log("button clicked");
+      $("#gameAgainbtn").css("visibility","hidden");
+      $(".bidResults").css("visibility","hidden");
+      $(".biddingDiv").css("display","block");
       var cardDeck = $("#cardDeck").playingCards();
       cardDeck.shuffle();
       var north = new bridgeHand;
@@ -475,6 +480,22 @@ $(document).ready(function(){
       east.sortHand();
       south.sortHand();
       this.hands = [north, east, south, west];
+      this.handsSaved = [north, east, south, west];
+      this.showHands(north, east, south, west);
+      var theBid = new bid;
+      theBid.startBid(this);
+    }
+
+    this.playAgain = function() {
+      $(".bidResults").css("visibility","hidden");
+      $(".biddingDiv").css("display","block");
+      this.hands = this.handsSaved;
+      north = this.handsSaved[0];
+      east = this.handsSaved[1];
+      south = this.handsSaved[2];
+      west = this.handsSaved[3];
+      console.log(north);
+      console.log(east);
       this.showHands(north, east, south, west);
       var theBid = new bid;
       theBid.startBid(this);
@@ -482,6 +503,7 @@ $(document).ready(function(){
 
     this.displayBidResults = function() {
       console.log("bid results");
+      $(".bidResults").css("visibility","visible");
       $('.biddingDiv').css("display","none");
       //this is the person who took the bid and is playing
       //this.player is a number (0-3) while this.playerDir is a word (i.e north, east)
@@ -535,6 +557,7 @@ $(document).ready(function(){
     }
     this.startBid = function(myTable) {
       //buttons to display bid results when bidding is over
+      this.clearBidTable();
       $("#bidResultsbtn").css("visibility","hidden");
       $('#playGamebtn').css("visibility","hidden");
       //values in the pull down menus.
@@ -564,8 +587,6 @@ $(document).ready(function(){
             //make the suit a null if bidamt is PASS
             bidsuit = null;
           //keep a history of all bids and PASSES (i.e. all submits)
-          console.log("current Bid");
-          console.log(self.currBid);
           self.history.push([bidamt, bidsuit]);
           //bidding is over if 3 PASSes in a row.
           if (!threePasses(self.history)) {
@@ -581,6 +602,23 @@ $(document).ready(function(){
           }
         } //end if legit bid
       }); //end click event
+    }
+
+    this.clearBidTable = function() {
+      var table = document.getElementById("bidTable");
+      var rowCount = table.rows.length;
+      console.log(rowCount);
+      console.log(table);
+      for (var i = 1; i < rowCount; i++) {
+        table.deleteRow(i);
+      }
+      //insert row 1
+      var newRow = document.getElementById('bidTable').insertRow(-1);
+      newRow.setAttribute("id","row1");        
+      //label row 1 as RND 1
+      var round = document.getElementById('row1');
+      x = round.insertCell(-1);
+      x.innerHTML = "RND 1";
     }
 
     //the first person to bid the trump suit who is also a partner 
@@ -714,5 +752,9 @@ $(document).ready(function(){
     var myHand = new playHand(myTable);
     myHand.startRound();
   });
+  $('#gameAgainbtn').click(function() {
+    removePlayingCards();
+    myTable.playAgain();
+  })
   var myTable = new bridgeTable;
 });
