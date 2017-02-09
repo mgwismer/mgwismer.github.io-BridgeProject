@@ -743,10 +743,14 @@ $(document).ready(function(){
   $(".theBidPartHeading").hover(function() {
     $('.theBidParagraph').slideDown("slow");
   });
+  $(".thePlayPartHeading").hover(function() {
+    $('.thePlayParagraph').slideDown("slow");
+  });
   $(".row").hover(function() {
     $('.aboutParagraph').slideUp("medium");
     $('.thePartsParagraph').slideUp("medium");
     $('.theBidParagraph').slideUp("medium");
+    $('.thePlayParagraph').slideUp("medium");
   })
   $('#learnButton').click(function() {
     $('.main-container').css('display','block');
