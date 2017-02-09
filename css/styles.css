@@ -9,15 +9,29 @@
  */
 body {
   margin-top: 1.0em;
-  background-color: #fff;
   font-family: "Helvetica,Arial,FreeSans";
-  color: #000000; }
+  color: #000000;
+  background-color: #cab08f; }
 
 .frontImage {
   background-image: url("../assets/cards.jpg");
   background-size: 100% 100%;
   height: 500px;
   color: white; }
+
+#learnButton {
+  position: relative;
+  left: 700px;
+  background-color: #ac6218;
+  border-radius: 10px;
+  font-family: cursive; }
+
+.headings {
+  font-family: cursive;
+  color: white;
+  background-color: #ac6218;
+  opacity: 0.6;
+  width: 40%; }
 
 .aboutParagraph {
   background-color: grey;
@@ -49,6 +63,10 @@ body {
   width: 100%;
   position: relative;
   margin: 0 auto; }
+
+.playBtn {
+  background-color: #ac6218;
+  border-radius: 10px; }
 
 #gameAgainbtn {
   visibility: hidden; }
@@ -138,6 +156,14 @@ body {
   position: absolute;
   top: 2em;
   left: 40em; }
+
+#submitBid {
+  background-color: #96c1a4;
+  border-radius: 10px; }
+
+.flipBtn {
+  background-color: #425a8e;
+  border-radius: 10px; }
 
 .bidResults {
   position: absolute;

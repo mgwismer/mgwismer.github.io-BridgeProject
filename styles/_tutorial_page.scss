@@ -11,6 +11,10 @@
   position: relative;
   margin: 0 auto;
 }
+.playBtn {
+  background-color: $mainBtnColor;
+  border-radius: 10px;
+}
 
 #gameAgainbtn {
   visibility: hidden;
@@ -123,6 +127,16 @@
 	position: absolute;
 	top: 2em;
 	left: 40em;
+}
+
+#submitBid {
+	background-color: #96c1a4;
+	border-radius: 10px;
+}
+
+.flipBtn {
+	background-color: #425a8e;
+	border-radius: 10px;
 }
 
 .bidResults {
