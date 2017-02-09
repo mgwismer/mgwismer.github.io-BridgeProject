@@ -734,7 +734,22 @@ $(document).ready(function(){
     }
   }
 
+  $(".aboutHeading").hover(function() {
+    $('.aboutParagraph').slideDown("slow");
+  })
+  $(".thePartsHeading").hover(function() {
+    $('.thePartsParagraph').slideDown("slow");
+  });
+  $(".theBidPartHeading").hover(function() {
+    $('.theBidParagraph').slideDown("slow");
+  });
+  $(".row").hover(function() {
+    $('.aboutParagraph').slideUp("medium");
+    $('.thePartsParagraph').slideUp("medium");
+    $('.theBidParagraph').slideUp("medium");
+  })
   $('#learnButton').click(function() {
+    $('.main-container').css('display','block');
     $('.frontImage').slideUp(3000);
   });
   $('#dealCards').click(function() {

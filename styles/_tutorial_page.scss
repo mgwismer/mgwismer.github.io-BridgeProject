@@ -1,0 +1,163 @@
+
+.main-container {
+  position: relative;
+  margin: 0 auto;
+  width: 860px;
+  display: none;
+}
+
+.gameButtons {
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+}
+
+#gameAgainbtn {
+  visibility: hidden;
+}
+
+.bridgeTable {
+	border: 2px solid black;
+	height: 800px;
+}
+
+.playingHand {
+ 	display: flex;
+ 	height: 10em;
+}
+
+.northCont {
+	position: relative;
+	left: $leftNS;
+	//width: $handWidth;
+}
+
+.southCont {
+	position: relative;
+	bottom: 18em;
+	left: $leftNS;
+	//width: $handWidth;
+}
+
+.eastCont {
+    position: relative;
+	bottom: 15em;
+	left: 30em;
+	//width: $handWidth;
+}
+
+.westCont {
+	position: relative;
+	bottom: 2em;
+	//width: $handWidth;
+	// width: 250px;
+}
+
+#currTrickDiv {
+	display: inline;
+	position: absolute;
+	top: 50px;
+	left: 50px;
+	height: 200px;
+	width: 150px;
+	z-index: 2;
+	visibility: visible;
+
+	#trickTable {
+	  	border: 2px solid red;
+	  	height: 150px;
+	  	width: 150px;
+		z-index: 2;
+	}
+}
+
+#eastTrick {
+	position: absolute;
+	top: 20%;
+	right: 0%;
+	width: $cardTrickWidth;
+	height: $cardTrickHeight;
+
+	.front {
+		visibility: visible !important;
+	}
+}
+
+#southTrick {
+	position: absolute;
+	left: 40%;
+	bottom: 0%;
+	width: $cardTrickWidth;
+	height: $cardTrickHeight;
+	.front {
+		visibility: visible !important;
+	}
+}
+#northTrick {
+	position: absolute;
+	top: 0%;
+	left: 20%;
+	width: $cardTrickWidth;
+	height: $cardTrickHeight;
+	.front {
+		visibility: visible !important;
+	}
+}
+
+#westTrick {
+	position: absolute;
+	top: 20%;
+	left: 0%;
+	width: $cardTrickWidth;
+	height: $cardTrickHeight;
+	.front {
+		visibility: visible !important;
+	}
+}
+
+#finalResults {
+	visibility: hidden;
+}
+.biddingDiv {
+	display: block;
+	position: absolute;
+	top: 2em;
+	left: 40em;
+}
+
+.bidResults {
+  position: absolute;
+  top: 2em;
+  left: 45em;
+  visibility: hidden;
+}
+
+.bidHead {
+	display: flex;
+}
+
+.bidSelectDiv {
+	display: flex;
+}
+
+.bidButton {
+	position: relative;
+	bottom: 10px;
+	left: 5px;
+}
+
+#bidTable {
+	width: 30%;
+	th,td {
+		padding: 5px;
+	}
+}
+
+.resultsTableDiv {
+	position: absolute;
+	width: 25%;
+	height: 25%;
+	left: 50em;
+	top: 30em;
+	visibility: hidden;
+}
