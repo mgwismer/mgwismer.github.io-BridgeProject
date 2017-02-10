@@ -56,7 +56,7 @@ $(document).ready(function(){
   var maxNumOfRounds = 7;
   var aBook = 6;
   var numTricksInAGame = 13;
-  var factorOverlap = 2.3;
+  var factorOverlap = 2.0;
 
   function trickResults(contract, bidder) {
     this.teams = [0,1];
@@ -132,19 +132,17 @@ $(document).ready(function(){
     }
 
     this.chooseACard = function(self, direction) {
-      console.log("num Tricks left");
-      console.log(self.numTricksLeft);
       if (self.numTricksLeft > 0) {
         //if it is your turn your cards will be flipped and listened to.
         if(self.playTable.tableDir[self.whoseTurn] == direction) {
           //don't flip the cards back if it is the dummy hand.
           if (self.playTable.dummy != self.whoseTurn)
-            self.playTable.hands[self.whoseTurn].flipCards(direction+"Hand");
+            self.playTable.hands[self.whoseTurn].showHand(direction+"Hand","visible");
           else {
             //when it is the dummy's turn you should flip her partner's cards.
             var dummyPartner = self.playTable.partner[self.whoseTurn];
             var nDirection = self.playTable.tableDir[dummyPartner];
-            self.playTable.hands[dummyPartner].flipCards(nDirection+"Hand");
+            self.playTable.hands[dummyPartner].showHand(nDirection+"Hand","visible");
           }
           listenToCards(self,direction);
         }
@@ -191,12 +189,13 @@ $(document).ready(function(){
             el.removeChild(el.firstChild);
           }
           //this is necessary because the bidder's hand is shown when it is dummy's turn.
-          //the bidder can always see both her and her partner's (i.e. dummy's) hand.
-          if (self.playTable.dummy == self.whoseTurn) {
-            bidderDir = self.playTable.tableDir[self.playTable.bidder];
-            self.playTable.hands[self.playTable.bidder].flipCards(bidderDir+"Hand");
+          //the bidder can always see both her and her partner's (i.e. dummy's) hand. This 
+          //code should rehide the bidder's hand.
+          if (self.playTable.dummy != self.whoseTurn) {
+            self.playTable.hands[self.whoseTurn].showHand(seatDir+"Hand","hidden");
           }
-          self.playTable.hands[self.whoseTurn].showHand(seatDir+"Hand");
+          else
+            self.playTable.hands[self.playTable.bidder].showHand(self.playTable.tableDir[self.playTable.bidder]+"Hand","hidden");
           //saves the card and the seat that played it in the trick array.
           var playedCard = new playCard(self.currCards[i],self.whoseTurn);
           self.trick.push(playedCard);
@@ -219,9 +218,7 @@ $(document).ready(function(){
             self.numTricksLeft--;
             removeCardListeners(self);
           }
-          console.log("whose turn");
           self.whoseTurn = self.playDir[self.lead][self.index];
-          console.log(self.whoseTurn);
         }
         else
           alert("must follow suit if you can");
@@ -418,7 +415,7 @@ $(document).ready(function(){
       }
     }
 
-    this.showHand = function(idName) {
+    this.showHand = function(idName,visibility) {
       var el = $('#'+idName);
       el.html('');
       hand = this.completeHand();
@@ -430,8 +427,11 @@ $(document).ready(function(){
       var cardFact = numTricksInAGame/cardsInHand.length
       for (var i = cardsInHand.length-1; i >= 0; i--) {
         var card = cardsInHand[i];
+        //front is a subdiv of playCard
+        var front = card.getElementsByClassName("front")[0];
         card.style.left = -(i*factorOverlap)+"em";
         card.style.zIndex = i;
+        front.style.visibility = visibility;
       }
     }
   }
@@ -518,14 +518,10 @@ $(document).ready(function(){
     }
 
     this.showHands = function(north, east, south, west) {
-      north.showHand("northHand");
-      north.flipCards("northHand");
-      west.showHand("westHand");
-      east.showHand("eastHand");
-      south.showHand("southHand");
-      west.flipCards("westHand");
-      east.flipCards("eastHand");
-      south.flipCards("southHand");
+      north.showHand("northHand","hidden");
+      west.showHand("westHand","hidden");
+      east.showHand("eastHand","hidden");
+      south.showHand("southHand","hidden");
     }
 
     this.determineDummy = function() {
@@ -560,7 +556,7 @@ $(document).ready(function(){
       var self = this;
       self.currBid = [this.amount, this.suit];
       //myTable.table is the array of directions
-      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","visible");
       //a button to submit the bid.
       subevt = $('#submitBid');
       subevt.css("visibility","visible");
@@ -661,7 +657,7 @@ $(document).ready(function(){
     }
   
     changeBidder = function(self) {
-      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","hidden");
       self.currentPos += 1;
       if (self.currentPos == numOfPlayers) {
         //after the 4th seat go back to first
@@ -679,7 +675,7 @@ $(document).ready(function(){
       if ((self.currentRow == maxNumOfRounds) && (self.currentPos == numOfPlayers)) {
         biddingOver(self);
       }
-      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","visible");
       //Tells the user which direction is the current bidder
       document.getElementById('bidDir').innerHTML = bidOrder[self.currentPos];
     }
@@ -689,7 +685,7 @@ $(document).ready(function(){
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
       bidRes = $('#playGamebtn').css("visibility","visible");
-      myTable.hands[self.currentPos].flipCards(myTable.tableDir[self.currentPos]+"Hand");
+      myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","hidden");
       document.getElementById('bidDir').innerHTML = "Bidding Over";
     }
   

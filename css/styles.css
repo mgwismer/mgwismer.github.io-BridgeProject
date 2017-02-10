@@ -36,22 +36,26 @@ body {
 .aboutParagraph {
   background-color: grey;
   padding: 10px;
-  display: none; }
+  display: none;
+  font-size: 20px; }
 
 .thePartsParagraph {
   background-color: grey;
   padding: 10px;
-  display: none; }
+  display: none;
+  font-size: 20px; }
 
 .theBidParagraph {
   background-color: grey;
   padding: 10px;
-  display: none; }
+  display: none;
+  font-size: 20px; }
 
 .thePlayParagraph {
   background-color: grey;
   padding: 10px;
-  display: none; }
+  display: none;
+  font-size: 20px; }
 
 .main-container {
   position: relative;
