@@ -72,7 +72,9 @@ $(document).ready(function(){
     this.checkForMadeContract = function() {
       var required = parseInt(this.contract)+6;
       $("#finalResults").css("visibility","visible");
-      if (this.theTeamsTricks[this.contractTeam] == required) {
+      console.log("results");
+      console.log(this.theTeamsTricks+" is equal "+required);
+      if (this.theTeamsTricks[this.contractTeam] >= required) {
         $("#finalResults").append("<h6> CONTRACT MADE </h6>");
       }
       else {
@@ -558,6 +560,7 @@ $(document).ready(function(){
       //myTable.table is the array of directions
       myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","visible");
       //a button to submit the bid.
+      this.listenToBidTable(self);
       subevt = $('#submitBid');
       subevt.css("visibility","visible");
       subevt.click(function() {
@@ -593,11 +596,27 @@ $(document).ready(function(){
       }); //end click event
     }
 
+    this.listenToBidTable = function(self) {
+      var rowAmt = document.getElementById("rowAmt");
+      var rowSuit = document.getElementById("rowSuit");
+      rowAmt.addEventListener("click", function(e1) {
+        document.getElementById("bidAmtBox").innerHTML = e1.target.innerHTML;
+      });
+
+      rowSuit.addEventListener("click", function(e2) {;
+        event = e2.target;
+        if( document.getElementById("bidAmtBox").innerHTML != "PASS") {
+          document.getElementById("bidSuitBox").innerHTML = event.innerHTML;
+          document.getElementById("bidSuitBox").style.color = event.style.color;
+        }
+        else
+          document.getElementById("bidSuitBox").innerHTML = "";
+      });
+    }
+
     this.clearBidTable = function() {
       var table = document.getElementById("bidTable");
       var rowCount = table.rows.length;
-      console.log(rowCount);
-      console.log(table);
       for (var i = 1; i < rowCount; i++) {
         table.deleteRow(i);
       }
@@ -695,7 +714,8 @@ $(document).ready(function(){
         if(amt > currBid[0]) 
           return true;
         else if (amt < currBid[0])  {
-          alert("Invalid Bid, Amount must be greater than "+currBid[0]);
+          $("#bidAmtModal").modal("show");
+          // alert("Invalid Bid, Amount must be greater than "+currBid[0]);
           return false;
         }
         else if (currBid[1] == null)
@@ -703,7 +723,7 @@ $(document).ready(function(){
         else if (suitOrder.indexOf(suit) > suitOrder.indexOf(currBid[1]))
           return true;
         else {
-          alert("Invalid Bid. Pick a higher ranked suit");
+          $("#bidSuitModal").modal("show");
           return false;
         }
       }

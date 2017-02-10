@@ -152,6 +152,16 @@ body {
   #westTrick .front {
     visibility: visible !important; }
 
+#bidBox {
+  padding: 0px;
+  height: 30px; }
+
+#bidDir {
+  padding: 0px; }
+
+.tableRow {
+  width: 50px; }
+
 #finalResults {
   visibility: hidden; }
 
@@ -160,6 +170,9 @@ body {
   position: absolute;
   top: 2em;
   left: 40em; }
+
+.bidButton {
+  padding: 0px; }
 
 #submitBid {
   background-color: #96c1a4;
@@ -175,16 +188,8 @@ body {
   left: 45em;
   visibility: hidden; }
 
-.bidHead {
-  display: flex; }
-
 .bidSelectDiv {
   display: flex; }
-
-.bidButton {
-  position: relative;
-  bottom: 10px;
-  left: 5px; }
 
 #bidTable {
   width: 30%; }
