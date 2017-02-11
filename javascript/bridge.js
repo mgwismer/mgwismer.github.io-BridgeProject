@@ -148,8 +148,12 @@ $(document).ready(function(){
           }
           listenToCards(self,direction);
         }
-        else 
-          alert("IT IS "+self.playTable.tableDir[self.whoseTurn]+"'s turn"); 
+        else {
+          $('#yourTurn').html(direction);
+          $('#whoseTurn').html(self.playTable.tableDir[self.whoseTurn]+"'s");
+          $('#justPlayed').html(self.justPlayed);
+          $('#whoseTurnModal').modal('show'); 
+        }
       }
       else {
         self.results.checkForMadeContract();
@@ -220,10 +224,11 @@ $(document).ready(function(){
             self.numTricksLeft--;
             removeCardListeners(self);
           }
+          self.justPlayed = self.whoseTurn;
           self.whoseTurn = self.playDir[self.lead][self.index];
         }
         else
-          alert("must follow suit if you can");
+          $('#followSuitModal').modal('show');
       });
     }
 
@@ -440,7 +445,7 @@ $(document).ready(function(){
 
   //Bridge Table object with methods
   function bridgeTable() {
-    this.tableDir = ["north", "east","south","west"];
+    this.tableDir = ["north","east","south","west"];
     this.partner = [2, 3, 0, 1];
     this.currentPos = 0;
     this.currentBidder = this.tableDir[this.currentPos];
@@ -454,7 +459,6 @@ $(document).ready(function(){
     this.defender1 = null;
     this.defender2 = null;
     this.createTable = function() {
-      console.log("button clicked");
       $("#gameAgainbtn").css("visibility","hidden");
       $(".bidResults").css("visibility","hidden");
       $(".biddingDiv").css("display","block");
@@ -564,9 +568,10 @@ $(document).ready(function(){
       subevt = $('#submitBid');
       subevt.css("visibility","visible");
       subevt.click(function() {
-        //current values in the pulldown menus
-        var bidamt = amt.options[amt.selectedIndex].text;
-        var bidsuit = suit.options[suit.selectedIndex].text;
+        //current values in bid Box
+        var bidamt = document.getElementById("bidAmtBox").innerHTML;
+        var bidsuit = document.getElementById("bidSuitBox").innerHTML;
+        var color = document.getElementById("bidSuitBox").style.color;
         if (legitBid(bidamt, bidsuit, self.currBid)) {
           //update the current bid, if not a PASS
           if (bidamt != "PASS") {
@@ -582,11 +587,11 @@ $(document).ready(function(){
           self.history.push([bidamt, bidsuit]);
           //bidding is over if 3 PASSes in a row.
           if (!threePasses(self.history)) {
-            updateTable(self.currentRow, bidamt, bidsuit);
+            updateTable(self.currentRow, bidamt, bidsuit, color);
             changeBidder(self);
           }
           else {
-            updateTable(self.currentRow, bidamt, bidsuit);
+            updateTable(self.currentRow, bidamt, bidsuit,color);
             myTable.trump = self.currBid[1];
             myTable.contract = self.currBid[0];
             myTable.bidder = self.determineBidder(self.history,myTable.trump);
@@ -601,24 +606,29 @@ $(document).ready(function(){
       var rowSuit = document.getElementById("rowSuit");
       rowAmt.addEventListener("click", function(e1) {
         document.getElementById("bidAmtBox").innerHTML = e1.target.innerHTML;
+        //if the bid is a PASS make the suit blank
+        if (document.getElementById("bidAmtBox").innerHTML == "PASS")
+          document.getElementById("bidSuitBox").innerHTML = "";          
       });
 
       rowSuit.addEventListener("click", function(e2) {;
         event = e2.target;
         if( document.getElementById("bidAmtBox").innerHTML != "PASS") {
           document.getElementById("bidSuitBox").innerHTML = event.innerHTML;
+          //this will make the hearts and diamonds red
           document.getElementById("bidSuitBox").style.color = event.style.color;
         }
         else
+          //don't fill in the Suit Box if the amount is PASS
           document.getElementById("bidSuitBox").innerHTML = "";
       });
     }
 
     this.clearBidTable = function() {
       var table = document.getElementById("bidTable");
-      var rowCount = table.rows.length;
-      for (var i = 1; i < rowCount; i++) {
-        table.deleteRow(i);
+      console.log(table);
+      while (table.rows.length > 1) {
+        table.deleteRow(-1);
       }
       //insert row 1
       var newRow = document.getElementById('bidTable').insertRow(-1);
@@ -626,7 +636,7 @@ $(document).ready(function(){
       //label row 1 as RND 1
       var round = document.getElementById('row1');
       x = round.insertCell(-1);
-      x.innerHTML = "RND 1";
+      x.innerHTML = "RND1";
     }
 
     //the first person to bid the trump suit who is also a partner 
@@ -663,11 +673,15 @@ $(document).ready(function(){
       }
     }
 
-    updateTable = function(currRow, amount, suit) {
+    updateTable = function(currRow, amount, suit, color) {
       var round = document.getElementById('row'+currRow);
-      x = round.insertCell(-1);
+      var x = round.insertCell(-1);
+      var ssuit = document.createElement("span");
+      ssuit.style.color = color;
       if (amount != "PASS") {
-        x.innerHTML = amount+suit;
+        x.innerHTML = amount;
+        ssuit.textContent = suit;
+        x.appendChild(ssuit);
       }
       else {
         //amount is a number 1 through 7 or the word PASS
@@ -689,7 +703,7 @@ $(document).ready(function(){
         //label new row
         var round = document.getElementById('row'+self.currentRow);
         x = round.insertCell(-1);
-        x.innerHTML = "RND "+self.currentRow;
+        x.innerHTML = "RND"+self.currentRow;
       }
       if ((self.currentRow == maxNumOfRounds) && (self.currentPos == numOfPlayers)) {
         biddingOver(self);
@@ -703,9 +717,8 @@ $(document).ready(function(){
       subevt = $('#submitBid').css("visibility","hidden");
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
-      bidRes = $('#playGamebtn').css("visibility","visible");
       myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","hidden");
-      document.getElementById('bidDir').innerHTML = "Bidding Over";
+      document.getElementById('bidHead')[0].innerHTML = "Bidding Over";
     }
   
     //implements the rules of bridge bidding
@@ -713,7 +726,7 @@ $(document).ready(function(){
       if (currBid[0] != 'PASS') {
         if(amt > currBid[0]) 
           return true;
-        else if (amt < currBid[0])  {
+        else if ((amt < currBid[0]) || ((amt == currBid[0]) && (suit == currBid[1]))) {
           $("#bidAmtModal").modal("show");
           // alert("Invalid Bid, Amount must be greater than "+currBid[0]);
           return false;
@@ -750,44 +763,55 @@ $(document).ready(function(){
     }
   }
 
-  $(".aboutHeading").hover(function() {
-    $('.aboutParagraph').slideDown("slow");
-  })
-  $(".thePartsHeading").hover(function() {
-    $('.thePartsParagraph').slideDown("slow");
-  });
-  $(".theBidPartHeading").hover(function() {
-    $('.theBidParagraph').slideDown("slow");
-  });
-  $(".thePlayPartHeading").hover(function() {
-    $('.thePlayParagraph').slideDown("slow");
-  });
-  $(".row").hover(function() {
-    $('.aboutParagraph').slideUp("medium");
-    $('.thePartsParagraph').slideUp("medium");
-    $('.theBidParagraph').slideUp("medium");
-    $('.thePlayParagraph').slideUp("medium");
-  })
-  $('#learnButton').click(function() {
-    $('.main-container').css('display','block');
-    $('.frontImage').slideUp(3000);
-  });
-  $('#dealCards').click(function() {
-    removePlayingCards();
-    myTable.createTable();
-    $('#currTrickDiv').css("visibility","hidden");
-  });
-  $('#bidResultsbtn').click(function() {
-    myTable.displayBidResults();
-  });
-  $('#playGamebtn').click(function() {
-    var myHand = new playHand(myTable);
-    $('#currTrickDiv').css("visibility","hidden");
-    myHand.startRound();
-  });
-  $('#gameAgainbtn').click(function() {
-    removePlayingCards();
-    myTable.playAgain();
-  })
+  function animateFrontPage() {
+    $(".aboutHeading").hover(function() {
+      $('.aboutParagraph').slideDown("slow");
+    })
+    $(".thePartsHeading").hover(function() {
+      $('.thePartsParagraph').slideDown("slow");
+    });
+    $(".theBidPartHeading").hover(function() {
+      $('.theBidParagraph').slideDown("slow");
+    });
+    $(".thePlayPartHeading").hover(function() {
+      $('.thePlayParagraph').slideDown("slow");
+    });
+    $(".row").hover(function() {
+      $('.aboutParagraph').slideUp("medium");
+      $('.thePartsParagraph').slideUp("medium");
+      $('.theBidParagraph').slideUp("medium");
+      $('.thePlayParagraph').slideUp("medium");
+    })
+    $('#learnButton').click(function() {
+      $('.main-container').css('display','block');
+      $('.frontImage').slideUp(3000);
+    });
+  }
+
+  function installPlayButtons() {
+    $('#dealCards').click(function() {
+      removePlayingCards();
+      myTable.createTable();
+      $('#currTrickDiv').css("visibility","hidden");
+      $("#bidResultsbtn").css("visibility","hidden");
+      $('#playGamebtn').css("visibility","hidden");
+      $('.biddingDiv').css("display","block");
+    });
+    $('#bidResultsbtn').click(function() {
+      myTable.displayBidResults();
+      $('#playGamebtn').css("visibility","visible");
+    });
+    $('#playGamebtn').click(function() {
+      var myHand = new playHand(myTable);
+      $('#currTrickDiv').css("visibility","hidden");
+      myHand.startRound();
+    });
+    $('#gameAgainbtn').click(function() {
+      removePlayingCards();
+      myTable.playAgain();
+    });
+  }
+  animateFrontPage();
+  installPlayButtons();
   var myTable = new bridgeTable;
 });
