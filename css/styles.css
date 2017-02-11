@@ -75,6 +75,12 @@ body {
 #gameAgainbtn {
   visibility: hidden; }
 
+#bidResultsbtn {
+  visibility: hidden; }
+
+#playGamebtn {
+  visibility: hidden; }
+
 .bridgeTable {
   border: 2px solid black;
   height: 800px; }
@@ -89,23 +95,23 @@ body {
 
 .southCont {
   position: relative;
-  bottom: 18em;
+  bottom: 18.5em;
   left: 15em; }
 
 .eastCont {
   position: relative;
-  bottom: 15em;
+  bottom: 15.5em;
   left: 30em; }
 
 .westCont {
   position: relative;
-  bottom: 2em; }
+  bottom: 2.2em; }
 
 #currTrickDiv {
   display: inline;
   position: absolute;
   top: 50px;
-  left: 50px;
+  left: 30px;
   height: 200px;
   width: 150px;
   z-index: 2;
@@ -166,17 +172,42 @@ body {
   visibility: hidden; }
 
 .biddingDiv {
-  display: block;
+  display: none;
   position: absolute;
   top: 2em;
   left: 40em; }
 
-.bidButton {
-  padding: 0px; }
+#submitBid {
+  position: relative;
+  top: -7px;
+  left: -20px;
+  padding: 5px; }
 
 #submitBid {
   background-color: #96c1a4;
   border-radius: 10px; }
+
+#bidInstructions {
+  background-color: #96c1a4;
+  margin: 0px; }
+
+.modalHeader {
+  display: flex; }
+
+.bidContentModal {
+  background-color: #96c1a4; }
+
+.whoseTurnContentModal {
+  background-color: #425a8e; }
+
+.trickSuitContentModal {
+  background-color: #425a8e; }
+
+.bidModalImage {
+  width: 75px;
+  height: 75px;
+  background-image: url("../assets/suits.jpg");
+  background-size: 100% 100%; }
 
 .flipBtn {
   background-color: #425a8e;
@@ -187,6 +218,12 @@ body {
   top: 2em;
   left: 45em;
   visibility: hidden; }
+
+.zeroMargin {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important; }
 
 .bidSelectDiv {
   display: flex; }
