@@ -17,6 +17,7 @@
 
 <body>
   <div class="container-fluid">
+<!--       <a href="https://mgwismer.github.io/PhotoGallery/">ABOUT ME</a> -->
     <div class="frontImage">
       <input type="button" id="learnButton" class="playBtn" value="LEARN BRIDGE">
       <div class="row">
@@ -171,7 +172,11 @@
         <div class="modal-content bidContentModal">
           <div class="modal-header modalHeader">
             <div class="bidModalImage"> </div>
+<<<<<<< HEAD
             <button type="button" class="close" data-dismiss="modal">&times;</button>
+=======
+<!--             <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+>>>>>>> frontpage
             <h4 class="modal-title">BID THE CORRECT SUIT</h4>
           </div>
           <div class="modal-body"> 
@@ -188,7 +193,11 @@
         <div class="modal-content bidContentModal">
           <div class="modal-header modalHeader">
             <div class="bidModalImage"> </div>
+<<<<<<< HEAD
             <button type="button" class="close" data-dismiss="modal">&times;</button>
+=======
+<!--             <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+>>>>>>> frontpage
             <h4 class="modal-title">BID THE CORRECT AMOUNT</h4>
           </div>
           <div class="modal-body"> 
@@ -205,7 +214,11 @@
         <div class="modal-content trickSuitContentModal">
           <div class="modal-header modalHeader">
             <div class="bidModalImage"> </div>
+<<<<<<< HEAD
             <button type="button" class="close" data-dismiss="modal">&times;</button>
+=======
+<!--             <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+>>>>>>> frontpage
             <h4 class="modal-title">FOLLOW SUIT</h4>
           </div>
           <div class="modal-body"> 
@@ -222,11 +235,26 @@
         <div class="modal-content whoseTurnContentModal">
           <div class="modal-header modalHeader">
             <div class="bidModalImage"> </div>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">IT IS NOT <span id="yourTurn"> </span> TURN</h4>
           </div>
           <div class="modal-body"> 
           <p> Card playing proceeds clockwise around the table. <span id="justPlayed"> </span> so it is <span id="whoseTurn"></span> turn </p> 
+          </div> 
+          <div class="modal-footer"> 
+            <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
+          </div>
+        </div> <!-- close Modal content -->    
+      </div>
+    </div> <!-- close Modal -->
+    <div class="modal fade" id="gameOverModal" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content gameOverContentModal">
+          <div class="modal-header modalHeader">
+            <div class="bidModalImage"> </div>
+            <h4 class="modal-title"> GAME OVER</h4>
+          </div>
+          <div class="modal-body"> 
+          <p id='gameOver'>  </p> 
           </div> 
           <div class="modal-footer"> 
             <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>

@@ -60,6 +60,7 @@ $(document).ready(function(){
 
   function trickResults(contract, bidder) {
     this.teams = [0,1];
+    this.teamsDir = ["North/South","East/West"];
     this.theTeamsTricks = [0,0]
     this.bidder = bidder;
     this.contractTeam = theTeams[bidder];
@@ -74,10 +75,15 @@ $(document).ready(function(){
       $("#finalResults").css("visibility","visible");
       console.log("results");
       console.log(this.theTeamsTricks+" is equal "+required);
+      var contractTeam = this.teamsDir[this.contractTeam];
       if (this.theTeamsTricks[this.contractTeam] >= required) {
+        var overTricks = this.theTeamsTricks[this.contractTeam]-required;
         $("#finalResults").append("<h6> CONTRACT MADE </h6>");
+        $("#gameOver").html("CONGRATULATIONS "+contractTeam+" you made the contract with "+overTricks+" overtricks.");
       }
       else {
+       var underTricks = required-this.theTeamsTricks[this.contractTeam];
+       $("#gameOver").html("SORRY "+contractTeam+" you missed the contract with "+underTricks+" undertricks.");
        $("#finalResults").append("<h6> CONTRACT NOT MADE </h6>");
       }
     }
@@ -157,7 +163,7 @@ $(document).ready(function(){
       }
       else {
         self.results.checkForMadeContract();
-        alert("GAME OVER"); 
+        $('#gameOverModal').modal('show'); 
       }
     }
 
@@ -718,7 +724,7 @@ $(document).ready(function(){
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
       myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","hidden");
-      document.getElementById('bidHead')[0].innerHTML = "Bidding Over";
+      document.getElementsByClassName('bidHead')[0].innerHTML = "Bidding Over";
     }
   
     //implements the rules of bridge bidding
