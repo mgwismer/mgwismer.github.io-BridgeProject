@@ -157,7 +157,7 @@ $(document).ready(function(){
         else {
           $('#yourTurn').html(direction);
           $('#whoseTurn').html(self.playTable.tableDir[self.whoseTurn]+"'s");
-          $('#justPlayed').html(self.justPlayed);
+          $('#justPlayed').html(self.playTable.tableDir[self.justPlayed]);
           $('#whoseTurnModal').modal('show'); 
         }
       }
