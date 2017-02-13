@@ -95,17 +95,17 @@ body {
 
 .southCont {
   position: relative;
-  bottom: 18.5em;
+  bottom: 17.8em;
   left: 15em; }
 
 .eastCont {
   position: relative;
-  bottom: 15.5em;
+  bottom: 15em;
   left: 30em; }
 
 .westCont {
   position: relative;
-  bottom: 2.2em; }
+  bottom: 1.7em; }
 
 #currTrickDiv {
   display: inline;
