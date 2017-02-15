@@ -613,7 +613,7 @@ $(document).ready(function(){
       rowAmt.addEventListener("click", function(e1) {
         event = e1.target
         var suitBox = document.getElementById("bidSuitBox").innerHTML;
-        if ((suitBox != "PASS") && (suitBox != "DBL")) {
+        if ((suitBox != "PASS") || (suitBox != "DBL")) {
           //if the suitBOX doesn't hold a PASS or a DBL put the amount in the AmtBox.
           document.getElementById("bidAmtBox").innerHTML = event.innerHTML;  
         }
@@ -731,24 +731,30 @@ $(document).ready(function(){
   
     //implements the rules of bridge bidding
     legitBid = function(amt, suit, currBid) {
-      if (currBid[0] != 'PASS') {
-        if(amt > currBid[0]) 
-          return true;
-        else if ((amt < currBid[0]) || ((amt == currBid[0]) && (suit == currBid[1]))) {
-          $("#bidAmtModal").modal("show");
-          // alert("Invalid Bid, Amount must be greater than "+currBid[0]);
-          return false;
-        }
-        else if (currBid[1] == null)
-          return true;
-        else if (suitOrder.indexOf(suit) > suitOrder.indexOf(currBid[1]))
-          return true;
-        else {
-          $("#bidSuitModal").modal("show");
-          return false;
-        }
+      console.log("legit Bid");
+      console.log(amt+" and "+suit);
+      console.log(currBid);
+      if ((currBid[1] == null) || (suit == "PASS"))
+        //any first bid and PASS are legit
+        return true;
+      else if (suit == "DBL") {
+        //can't have two doubles in a row
+        return currBid[1] != "DBL";
+        alert("Can't have two doubles in a row");
       }
-      return true;
+      else if (amt > parseInt(currBid[0]))
+        return true;
+      else if ((amt < parseInt(currBid[0])) || (amt == parseInt(currBid[0])) && (suit == currBid[1])) {
+        $('#bidAmtModal').modal('show');
+        return false;
+      }
+      else if (suitOrder.indexOf(suit) < suitOrder.indexOf(currBid[1])) {
+        //must bid higher rank suit
+        $('#bidSuitModal').modal('show');
+        return false;
+      }
+      else 
+        return true;
     }
   }
 
