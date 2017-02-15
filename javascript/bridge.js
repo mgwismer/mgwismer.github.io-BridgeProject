@@ -611,23 +611,25 @@ $(document).ready(function(){
       var rowAmt = document.getElementById("rowAmt");
       var rowSuit = document.getElementById("rowSuit");
       rowAmt.addEventListener("click", function(e1) {
-        document.getElementById("bidAmtBox").innerHTML = e1.target.innerHTML;
-        //if the bid is a PASS make the suit blank
-        if (document.getElementById("bidAmtBox").innerHTML == "PASS")
-          document.getElementById("bidSuitBox").innerHTML = "";          
-      });
-
-      rowSuit.addEventListener("click", function(e2) {;
-        event = e2.target;
-        if( document.getElementById("bidAmtBox").innerHTML != "PASS") {
-          document.getElementById("bidSuitBox").innerHTML = event.innerHTML;
-          //this will make the hearts and diamonds red
-          document.getElementById("bidSuitBox").style.color = event.style.color;
+        event = e1.target
+        var suitBox = document.getElementById("bidSuitBox").innerHTML;
+        if ((suitBox != "PASS") && (suitBox != "DBL")) {
+          //if the suitBOX doesn't hold a PASS or a DBL put the amount in the AmtBox.
+          document.getElementById("bidAmtBox").innerHTML = event.innerHTML;  
         }
-        else
-          //don't fill in the Suit Box if the amount is PASS
-          document.getElementById("bidSuitBox").innerHTML = "";
+        else 
+          //make the AmtBox blank
+          document.getElementById("bidAmtBox").innerHTML = "";      
       });
+      rowSuit.addEventListener("click", function(e2) {
+        event = e2.target;
+        document.getElementById("bidSuitBox").innerHTML = event.innerHTML;
+        //this will make the hearts and diamonds red
+        document.getElementById("bidSuitBox").style.color = event.style.color;
+        var suitBox = document.getElementById("bidSuitBox").innerHTML;
+        if ((suitBox == "PASS") || (suitBox == "DBL"))
+          document.getElementById("bidAmtBox").innerHTML = "";
+      }); 
     }
 
     this.clearBidTable = function() {
