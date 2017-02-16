@@ -543,6 +543,7 @@ $(document).ready(function(){
 
   var bid = function() {
     bidOrder = ["north","east","south","west"];
+    //makes DBL the lowest rank suit
     suitOrder = ["♣︎","♦︎","♥︎","♠︎","NT"];
     this.currentRow = 1;
     //position of current bidder
@@ -550,6 +551,7 @@ $(document).ready(function(){
     this.amount = 0;
     this.suit = null;
     this.history = [];
+    this.currDBL = false;
     //stores position of most recent non PASS bidder
     this.bidder = null;
     this.setCurrentBid = function(amt, suit) {
@@ -578,17 +580,21 @@ $(document).ready(function(){
         var bidamt = document.getElementById("bidAmtBox").innerHTML;
         var bidsuit = document.getElementById("bidSuitBox").innerHTML;
         var color = document.getElementById("bidSuitBox").style.color;
-        if (legitBid(bidamt, bidsuit, self.currBid)) {
-          //update the current bid, if not a PASS
-          if (bidamt != "PASS") {
+        if (bidsuit != "DBL") 
+           self.currDBL = false;
+        //now need to pass in self because need the ability to change self.currDBL to true when 
+        //there is a double bid.
+        if (legitBid(bidamt, bidsuit, self.currBid, self)) {
+          //update the current bid, if not a PASS or DBL
+          if ((bidsuit != "PASS") && (bidsuit != "DBL")){
             self.currBid = [bidamt, bidsuit];
             //stores who made the last non-PASS bid. This suit will be trump if it
             //is the final bid.
             self.bidder = self.currentPos;
           }
           else 
-            //make the suit a null if bidamt is PASS
-            bidsuit = null;
+            //make the suit a null if bidsuit is PASS
+            bidamt = null;
           //keep a history of all bids and PASSES (i.e. all submits)
           self.history.push([bidamt, bidsuit]);
           //bidding is over if 3 PASSes in a row.
@@ -674,7 +680,7 @@ $(document).ready(function(){
       if (bids.length > 3) {
         //the last three in the bids array
         var lastThree = bids.slice(-3);
-        if ((lastThree[0][0] == "PASS") && (lastThree[0][0] == lastThree[1][0])&&(lastThree[1][0] == lastThree[2][0]))
+        if ((lastThree[0][1] == "PASS") && (lastThree[0][1] == lastThree[1][1])&&(lastThree[1][1] == lastThree[2][1]))
           return true;
         else
           return false;
@@ -730,7 +736,7 @@ $(document).ready(function(){
     }
   
     //implements the rules of bridge bidding
-    legitBid = function(amt, suit, currBid) {
+    legitBid = function(amt, suit, currBid, self) {
       console.log("legit Bid");
       console.log(amt+" and "+suit);
       console.log(currBid);
@@ -738,9 +744,15 @@ $(document).ready(function(){
         //any first bid and PASS are legit
         return true;
       else if (suit == "DBL") {
-        //can't have two doubles in a row
-        return currBid[1] != "DBL";
-        alert("Can't have two doubles in a row");
+        if (self.currDBL) {
+          //can't have two doubles in a row
+          alert("Can't have two doubles in a row");
+          return false;
+        }
+        else {
+          self.currDBL = true;
+          return true;
+        }
       }
       else if (amt > parseInt(currBid[0]))
         return true;
