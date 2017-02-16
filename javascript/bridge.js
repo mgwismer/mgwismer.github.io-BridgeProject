@@ -554,10 +554,6 @@ $(document).ready(function(){
     this.currDBL = false;
     //stores position of most recent non PASS bidder
     this.bidder = null;
-    this.setCurrentBid = function(amt, suit) {
-      this.amount = amt;
-      this.suit = suit;
-    }
     this.startBid = function(myTable) {
       //buttons to display bid results when bidding is over
       this.clearBidTable();
@@ -740,13 +736,18 @@ $(document).ready(function(){
       console.log("legit Bid");
       console.log(amt+" and "+suit);
       console.log(currBid);
-      if ((currBid[1] == null) || (suit == "PASS"))
+      if (((currBid[1] == null)&&(suit != "DBL")) || (suit == "PASS"))
         //any first bid and PASS are legit
         return true;
       else if (suit == "DBL") {
         if (self.currDBL) {
           //can't have two doubles in a row
           alert("Can't have two doubles in a row");
+          return false;
+        }
+        else if (currBid[1] == null) {
+          //can't start bidding with DBL
+          alert("can't start with DBL");
           return false;
         }
         else {
