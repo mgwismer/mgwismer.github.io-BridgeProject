@@ -793,22 +793,27 @@ $(document).ready(function(){
   function animateFrontPage() {
     $(".aboutHeading").hover(function() {
       $('.aboutParagraph').slideDown("slow");
+      $('.thePartsParagraph').delay('slow').slideUp("slow");
     })
     $(".thePartsHeading").hover(function() {
       $('.thePartsParagraph').slideDown("slow");
+      $('.aboutParagraph').delay('slow').slideUp("slow");
     });
     $(".theBidPartHeading").hover(function() {
       $('.theBidParagraph').slideDown("slow");
+      $('.thePartsParagraph').delay('slow').slideUp("slow");
+      $('.thePlayPartHeading').delay('slow').slideUp("slow");
     });
     $(".thePlayPartHeading").hover(function() {
       $('.thePlayParagraph').slideDown("slow");
+      $('.theBidParagraph').delay('slow').slideUp("slow");
     });
-    $(".row").hover(function() {
-      $('.aboutParagraph').slideUp("medium");
-      $('.thePartsParagraph').slideUp("medium");
-      $('.theBidParagraph').slideUp("medium");
-      $('.thePlayParagraph').slideUp("medium");
-    })
+    // $(".row").hover(function() {
+    //   $('.aboutParagraph').slideUp("medium");
+    //   $('.thePartsParagraph').slideUp("medium");
+    //   $('.theBidParagraph').slideUp("medium");
+    //   $('.thePlayParagraph').slideUp("medium");
+    // })
     $('#learnButton').click(function() {
       $('.main-container').css('display','block');
       $('.frontImage').slideUp(3000);
