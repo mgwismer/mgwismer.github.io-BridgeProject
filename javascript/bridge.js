@@ -802,7 +802,7 @@ $(document).ready(function(){
     $(".theBidPartHeading").hover(function() {
       $('.theBidParagraph').slideDown("slow");
       $('.thePartsParagraph').delay('slow').slideUp("slow");
-      $('.thePlayPartHeading').delay('slow').slideUp("slow");
+      $('.thePlayParagraph').delay('slow').slideUp("slow");
     });
     $(".thePlayPartHeading").hover(function() {
       $('.thePlayParagraph').slideDown("slow");
