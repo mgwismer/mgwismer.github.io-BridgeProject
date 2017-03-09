@@ -683,6 +683,7 @@ $(document).ready(function(){
       }
     }
 
+    //updates the bidding table
     updateTable = function(currRow, amount, suit, color) {
       var round = document.getElementById('row'+currRow);
       var x = round.insertCell(-1);
@@ -727,6 +728,7 @@ $(document).ready(function(){
       subevt = $('#submitBid').css("visibility","hidden");
       subevt.off('click');
       bidRes = $('#bidResultsbtn').css("visibility","visible");
+      //hide last hand to bid
       myTable.hands[self.currentPos].showHand(myTable.tableDir[self.currentPos]+"Hand","hidden");
       document.getElementsByClassName('bidHead')[0].innerHTML = "Bidding Over";
     }
@@ -755,8 +757,10 @@ $(document).ready(function(){
           return true;
         }
       }
+      //any amount current than high bid is valid
       else if (amt > parseInt(currBid[0]))
         return true;
+      //must bid higher amount in same suit
       else if ((amt < parseInt(currBid[0])) || (amt == parseInt(currBid[0])) && (suit == currBid[1])) {
         $('#bidAmtModal').modal('show');
         return false;
