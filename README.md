@@ -3,7 +3,7 @@ An interactive Bridge practice site for anyone wanting to learn bridge or practi
 
 Check out the live site:
 
-https://mgwismer.github.io/BridgeProject/
+https://mgwismer.github.io/mgwismer.github.io-BridgeProject/
 
 Uses the card creation javascript library playingcards.js to shuffle, draw and display cards.
 
